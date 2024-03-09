@@ -16,7 +16,6 @@ import EmployeeTaskManagementPage from "@/components/pages/employee/EmployeeTask
 // Страницы менеджера
 import ManagerDashboardPage from "@/components/pages/manager/ManagerDashboardPage";
 import ManagerTaskManagementPage from "@/components/pages/manager/ManagerTaskManagementPage";
-import ManagerEmployeeManagementPage from "@/components/pages/manager/ManagerEmployeeManagementPage";
 
 import AccountPage from "@/components/pages/AccountPage";
 import FeedbackPage from "@/components/pages/FeedbackPage";
@@ -36,70 +35,52 @@ const routes = [
 	{
 		path: "/",
 		name: "Home",
-		beforeEnter(to, from, next) {
+		// component: EmployeeDashboardPage,
+		// meta: { requiredRoles: [], requiresAuth: true },
+		redirect: (to) => {
 			const userType = store.state?.user?.data?.user_type;
 
 			switch (userType) {
 				case Roles.Employee:
-					next({ name: "EmployeeHome" });
+					return { name: "EmployeeHome" };
 					break;
 				case Roles.Manager:
-					next({ name: "ManagerHome" });
+					return { name: "ManagerHome" };
 					break;
 				default:
-					next({ name: "Error404" });
+					return { name: "Error404" };
 			}
 		},
 	},
 	{
-		path: "/employee-home",
+		path: "/employee",
 		name: "EmployeeHome",
 		component: EmployeeDashboardPage,
 		meta: { requiredRoles: [], requiresAuth: true },
-		beforeEnter(to, from, next) {
-			const userType = store.state?.user?.data?.user_type;
-
-			switch (userType) {
-				case Roles.Employee:
-					next();
-					break;
-				default:
-					next({ name: "Error404" });
-			}
-		},
 	},
 	{
-		path: "/manager-home",
+		path: "/manager",
 		name: "ManagerHome",
 		component: ManagerDashboardPage,
 		meta: { requiredRoles: [], requiresAuth: true },
-		beforeEnter(to, from, next) {
-			const userType = store.state?.user?.data?.user_type;
-
-			switch (userType) {
-				case Roles.Manager:
-					next();
-					break;
-				default:
-					next({ name: "Error404" });
-			}
-		},
 	},
 	{
 		path: "/tasks",
 		name: "Tasks",
-		beforeEnter(to, from, next) {
+		// component: TaskManagementPage,
+		// meta: { requiredRoles: [], requiresAuth: true },
+		redirect: (to) => {
 			const userType = store.state?.user?.data?.user_type;
 
 			switch (userType) {
 				case Roles.Employee:
-					next({ name: "EmployeeTasks" });
+					return { name: "EmployeeTasks" };
 					break;
 				case Roles.Manager:
-					next({ name: "ManagerTasks" });
+					return { name: "ManagerTasks" };
 					break;
 				default:
-					next({ name: "Error404" });
+					return { name: "Error404" };
 			}
 		},
 	},
@@ -108,15 +89,18 @@ const routes = [
 		name: "EmployeeTasks",
 		component: EmployeeTaskManagementPage,
 		meta: { requiredRoles: [], requiresAuth: true },
-		beforeEnter(to, from, next) {
+		redirect: (to) => {
 			const userType = store.state?.user?.data?.user_type;
 
 			switch (userType) {
 				case Roles.Employee:
-					next();
+					return null;
+					break;
+				case Roles.Manager:
+					return { name: "ManagerTasks" };
 					break;
 				default:
-					next({ name: "Error404" });
+					return { name: "Error404" };
 			}
 		},
 	},
@@ -125,35 +109,13 @@ const routes = [
 		name: "ManagerTasks",
 		component: ManagerTaskManagementPage,
 		meta: { requiredRoles: [], requiresAuth: true },
-		beforeEnter(to, from, next) {
-			const userType = store.state?.user?.data?.user_type;
-
-			switch (userType) {
-				case Roles.Manager:
-					next();
-					break;
-				default:
-					next({ name: "Error404" });
-			}
-		},
 	},
-	{
-		path: "/employees",
-		name: "Employees",
-		component: ManagerEmployeeManagementPage,
-		meta: { requiredRoles: [], requiresAuth: true },
-		beforeEnter(to, from, next) {
-			const userType = store.state?.user?.data?.user_type;
-
-			switch (userType) {
-				case Roles.Manager:
-					next();
-					break;
-				default:
-					next({ name: "Error404" });
-			}
-		},
-	},
+	// {
+	// 	path: "/create-task",
+	// 	name: "CreateTask",
+	// 	component: CreateTaskPage,
+	// 	meta: { requiredRoles: [], requiresAuth: true },
+	// },
 	{
 		path: "/about",
 		name: "About",

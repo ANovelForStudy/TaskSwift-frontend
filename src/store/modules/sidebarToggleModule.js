@@ -1,4 +1,4 @@
-export const sidebarDrawer = {
+export const sidebarDrawerModule = {
 	state: () => ({
 		isRail: true,
 	}),

@@ -1,5 +1,5 @@
 <template>
-	<v-main style="height: 70vh"></v-main>
+	<div></div>
 </template>
 
 <script>

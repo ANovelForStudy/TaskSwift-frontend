@@ -2,27 +2,31 @@
 	<v-container class="d-flex justify-center align-center h-100">
 		<div class="card-wrapper">
 			<div class="text-h3 text-center mb-10">
-				Вход в систему <span class="text-accent">T</span>ask<span
-					class="text-accent"
-					>S</span
-				>wift
+				Вход в систему
+				<span class="text-accent">T</span>ask<span class="text-accent">S</span>wift
 			</div>
 			<v-card>
-				<v-form fast-fail @submit.prevent="submitForm">
+				<v-form
+					fast-fail
+					@submit.prevent="submitForm"
+				>
 					<div class="px-5 pt-5">
 						<v-text-field
-							name="name"
+							name="email"
+							prepend-inner-icon="mail"
 							label="Электронная почта"
 							type="email"
 							v-model="form.email"
 							variant="outlined"
-							:rules="rules"
 							color="accent"
 						></v-text-field>
 						<v-text-field
-							name="name"
+							name="password"
+							prepend-inner-icon="lock"
+							:append-icon="showPassword ? 'visibility_off' : 'visibility'"
+							@click:append="showPassword = !showPassword"
 							label="Пароль"
-							type="password"
+							:type="showPassword ? 'text' : 'password'"
 							variant="outlined"
 							v-model="form.password"
 							color="accent"
@@ -38,9 +42,7 @@
 								</p>
 							</v-scroll-y-transition>
 						</div>
-						<v-row
-							class="px-5 justify-space-between align-center d-flex"
-						>
+						<v-row class="px-5 justify-space-between align-center d-flex">
 							<v-checkbox
 								label="Запомнить меня"
 								v-model="isRemembered"
@@ -51,8 +53,9 @@
 							<a
 								href="#"
 								class="pe-3 text-accent text-decoration-none"
-								>Забыли пароль?</a
 							>
+								Забыли пароль?
+							</a>
 						</v-row>
 					</div>
 					<v-btn
@@ -61,8 +64,9 @@
 						:loading="loading"
 						type="submit"
 						variant="text"
-						><span class="">Войти</span></v-btn
 					>
+						<span class="">Войти</span>
+					</v-btn>
 				</v-form>
 			</v-card>
 		</div>
@@ -74,90 +78,106 @@ import axios from "axios";
 
 export default {
 	data: () => ({
+		showPassword: false,
+		// Состояние видимости спиннера
 		loading: false,
+		// Состояние галочки "Запомнить меня"
 		isRemembered: false,
 		form: {
-			email: "test_email_10@gmail.com",
-			password: "test1test1",
+			email: "test_email_2@gmail.com",
+			password: "test5test5",
 		},
 		formErrors: [],
 	}),
 	methods: {
+		// Валидация и отправка формы на сервер и получение токена
 		submitForm() {
-			console.log("[LogIn]: Очистка токена");
-
+			// Очистка заголовка с авторизационными данными (токеном)
 			axios.defaults.headers.common["Authorization"] = "";
 
-			localStorage.removeItem("token");
+			// Удаление токена из локального хранилища
+			localStorage.removeItem("userToken");
 
+			// Очистка массива ошибок валидации и входа
 			this.formErrors = [];
 
+			// Проверка указания электронной почты
 			if (this.form.email === "") {
-				this.formErrors.push(
-					"Требуется указать адрес электронной почты!"
-				);
+				this.formErrors.push("Требуется указать адрес электронной почты!");
 			}
 
-			const validRegex =
-				/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+			// Проверка на соответствие почты определённому регулярному выражению
+			const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
 			if (!this.form.email.match(validRegex)) {
-				this.formErrors.push(
-					"Электронная почта имеет неверный формат!"
-				);
+				this.formErrors.push("Электронная почта имеет неверный формат!");
 			}
 
+			// Проверка указания электронной почты
 			if (this.form.password === "") {
 				this.formErrors.push("Требуется указать пароль!");
 			}
 
+			// Если ошибок валидации нет, то начать процедуру аутентификации
 			if (!this.formErrors.length) {
+				// Включение спиннера
 				this.loading = true;
 
-				console.log(this.form);
-
 				axios
-					.post("/api/v1/auth/token/login/", this.form)
+					.post("/api/v1/auth/token/login/", this.form) // Отправка POST-запроса с данными формы
 					.then((response) => {
+						// Извлечение токена
 						const token = response.data.auth_token;
 
+						// Запись токена в соответствующий заголовок
+						axios.defaults.headers.common["Authorization"] = "Token " + token;
+
+						// Получение данных пользователя
+						this.$store.dispatch("fetchUser");
+
+						// Вызов мутации из Vuex для записи токена в состояние
 						this.$store.commit("setToken", token);
 
-						axios.defaults.headers.common["Authorization"] =
-							"Token " + token;
+						// Если пользователь поставил галочку "запомнить меня"
+						if (this.isRemembered) {
+							// Запись токена в локальное хранилище
+							localStorage.setItem("userToken", token);
+						}
 
-						console.log("Token " + token);
-
-						localStorage.setItem("userToken", token);
-
-						this.$router.push("/");
+						setTimeout(() => {
+							// Перенаправление на домашнюю страницу
+							this.$router.push({ name: "Home" });
+						}, 300);
 					})
 					.catch((error) => {
+						// Обработка ошибки: если получен ответ от сервера
 						if (error.response) {
+							// Итерация по свойствам объекта с ошибками в данных ответа
 							for (const property in error.response.data) {
-								this.formErrors.push(
-									error.response.data[property].toString()
-								);
+								// Добавление ошибок в массив формы для отображения пользователю
+								this.formErrors.push(error.response.data[property].toString());
 							}
 
+							// Вывод данных ошибки из ответа сервера в консоль
 							console.log(JSON.stringify(error.response.data));
-						} else if (error.message) {
-							this.formErrors.push(
-								"Что-то пошло не так! Пожалуйста, попробуйте ещё раз!"
-							);
+						}
+						// Обработка ошибки: если сообщение об ошибке доступно
+						else if (error.message) {
+							// Добавление общего сообщения об ошибке в массив формы
+							this.formErrors.push("Что-то пошло не так! Пожалуйста, попробуйте ещё раз!");
 
+							// Вывод исключения в консоль
 							console.log(error);
 						}
 					})
-					.finally(() => (this.loading = false));
+					.finally(() => {
+						// Спрятать спиннер по завершению
+						this.loading = false;
+					});
 			}
 		},
 	},
 };
 </script>
 
-<style lang="scss" scoped>
-// .card-wrapper {
-// 	min-width: 450px;
-// }
-</style>
+<style lang="scss" scoped></style>

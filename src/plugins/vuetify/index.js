@@ -17,48 +17,47 @@ const vuetify = createVuetify({
 	},
 	theme: {
 		themes: {
-			lightBlue: {
-				dark: false,
-				colors: {
-					primary: colors.blue.lighten3,
-					secondary: colors.blue.lighten2,
-					sidebar: colors.blue.accent2,
-					topbar: colors.blue.accent1,
-					footer: colors.blue.accent1,
-				},
-			},
-			darkBlue: {
-				dark: true,
-				colors: {
-					primary: colors.blue.darken2,
-					secondary: colors.blue.darken3,
-					sidebar: colors.blue.darken3,
-					topbar: colors.blue.darken2,
-					footer: colors.blue.darken2,
-				},
-			},
-			darkGreyBlue: {
+			darkGreyGreen: {
 				dark: true,
 				colors: {
 					primary: colors.grey.darken2,
 					secondary: colors.grey.darken3,
+
 					sidebar: colors.grey.darken4,
 					topbar: colors.grey.darken4,
 					footer: colors.grey.darken4,
+
 					background: "#1A1A1A",
 					accent: colors.green.accent3,
+
+					card_main: colors.grey.darken4,
+					card_secondary: colors.grey.darken3,
+
+					card_header: "#303030",
+					card_body: "#282828",
+					card_footer: "#212121",
 				},
 			},
-			lightGreyBlue: {
+			lightGreyGreen: {
 				dark: false,
 				colors: {
 					primary: colors.grey.lighten2,
 					secondary: colors.grey.lighten3,
+
 					sidebar: colors.grey.lighten4,
 					topbar: colors.grey.lighten4,
 					footer: colors.grey.lighten4,
+
 					background: colors.grey.lighten3,
-					accent: colors.blue.accent1,
+					// accent: colors.green.accent4,
+					accent: "#00af49",
+
+					card_main: colors.grey.lighten3,
+					card_secondary: colors.grey.lighten2,
+
+					card_header: "#eeeeee",
+					card_body: "#dadada",
+					card_footer: "#d1d1d1",
 				},
 			},
 		},
