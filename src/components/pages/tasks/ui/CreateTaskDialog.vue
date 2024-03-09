@@ -65,9 +65,7 @@
 								<v-col>
 									<v-select
 										v-model="task.assigned_to"
-										:items="users"
-										item-title="name"
-										item-value="id"
+										:items="employeeItems"
 										label="Исполнитель"
 										prepend-icon="person"
 										variant="outlined"
@@ -152,6 +150,8 @@
 <script>
 import axios from "axios";
 
+import { getEmployees } from "@/services/api/apiUsersService";
+
 export default {
 	data: () => ({
 		task: {
@@ -163,7 +163,7 @@ export default {
 			deadline: null,
 			color: "#FFFFFF",
 		},
-		users: [],
+		employees: [],
 		loading: false,
 		dialog: false,
 	}),
@@ -172,6 +172,21 @@ export default {
 			type: Array,
 			required: true,
 		},
+	},
+	computed: {
+		employeeItems() {
+			return this.employees.map((employee) => ({
+				title: `${employee.last_name || ""} ${employee.first_name || ""} ${employee.middle_name || ""} - ${employee.email}`,
+				value: employee.id,
+			}));
+		},
+	},
+	async created() {
+		try {
+			this.employees = await getEmployees();
+		} catch (error) {
+			console.error(error);
+		}
 	},
 	methods: {
 		taskDeadlineFormatValidation(value) {
@@ -231,5 +246,3 @@ export default {
 	},
 };
 </script>
-
-<style lang="scss" scoped></style>

@@ -1,8 +1,10 @@
 <template>
 	<v-dialog
 		max-width="600"
+		v-model="dialog"
 		style="background: #000000aa"
-		transition="dialog-bottom-transition">
+		transition="dialog-bottom-transition"
+	>
 		<template v-slot:activator="{ props: activatorProps }">
 			<v-btn
 				v-bind="activatorProps"
@@ -18,13 +20,12 @@
 			<v-card
 				class="bg-card_main"
 				style="ma-0"
-				><v-card-title class="headline text-center py-5"
-					>Создание категории</v-card-title
-				>
+				><v-card-title class="headline text-center py-5">Создание категории</v-card-title>
 				<v-card-text>
 					<v-form
 						ref="createCategoryForm"
-						@submit.prevent="submitCategory">
+						@submit.prevent="submitCategory"
+					>
 						<v-container>
 							<v-text-field
 								v-model="category.name"
@@ -34,7 +35,8 @@
 								prepend-icon="title"
 								color="accent"
 								class="mb-2"
-								required></v-text-field>
+								required
+							></v-text-field>
 
 							<v-textarea
 								v-model="category.description"
@@ -43,7 +45,8 @@
 								variant="outlined"
 								color="accent"
 								class="mb-2"
-								rows="3"></v-textarea>
+								rows="3"
+							></v-textarea>
 
 							<v-container class="pa-0">
 								<v-row>
@@ -57,9 +60,8 @@
 												mode="hex"
 												hide-inputs
 												hide-swatches
-												:swatches-max-height="
-													80
-												"></v-color-picker>
+												:swatches-max-height="80"
+											></v-color-picker>
 										</v-container>
 
 										<v-text-field
@@ -69,7 +71,8 @@
 											prepend-icon="palette"
 											readonly
 											color="accent"
-											hint="Только для чтения"></v-text-field>
+											hint="Только для чтения"
+										></v-text-field>
 									</v-col>
 									<v-col> </v-col>
 								</v-row>
@@ -115,6 +118,7 @@ export default {
 			description: "",
 			color: "#FFFFFF",
 		},
+		dialog: false,
 	}),
 	methods: {
 		categoryNameLengthValidation(value) {
@@ -133,6 +137,8 @@ export default {
 				.post("/api/v1/tasks/categories/", this.category)
 				.then((response) => {
 					this.$emit("createTaskCategory", response.data);
+
+					this.dialog = false;
 				})
 				.catch((error) => {
 					console.log(error);

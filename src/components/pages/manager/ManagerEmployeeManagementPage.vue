@@ -1,7 +1,7 @@
 <template>
 	<v-container>
 		<div class="py-3">
-			<dir class="text-h3">Управление задачами</dir>
+			<dir class="text-h3">Управление сотрудниками</dir>
 			<dir class="text-h5">Действия</dir>
 		</div>
 		<v-row class="py-5">
@@ -139,7 +139,7 @@ export default {
 			const employee_ids = this.selected.map((employee) => employee.id);
 
 			await axios
-				.delete("/api/v1/users/employees/", { employee_ids })
+				.delete("/api/v1/users/employees/", { data: { employee_ids } })
 				.then((response) => {
 					this.employees = this.employees.filter((employee) => !this.selected.includes(employee));
 

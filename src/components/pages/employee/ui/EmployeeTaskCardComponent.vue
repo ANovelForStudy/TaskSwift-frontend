@@ -18,7 +18,10 @@
 						></div>
 					</div>
 					<v-card-subtitle>Категория: {{ task.category ? task.category : "Без категории" }}</v-card-subtitle>
-					<v-card-subtitle>Исполнитель: {{ task.assigned_to ? task.assigned_to : "Не назначен" }}</v-card-subtitle>
+					<v-card-subtitle
+						>Статус:
+						{{ task.is_completed !== undefined ? (task.is_completed ? "Выполнена" : "Не выполнена") : "Не установлен" }}</v-card-subtitle
+					>
 				</div>
 			</div>
 			<v-card-text class="bg-card_body text-truncate">
@@ -39,15 +42,20 @@
 						v-bind="props"
 					></EmployeeTaskDetailViewDialog>
 					<v-tooltip
-						text="Отметить как выполненную"
+						:text="!task.is_completed ? 'Отметить как выполненную' : 'Отправить на доработку'"
 						location="bottom"
 					>
 						<template v-slot:activator="{ props }">
 							<v-btn
-								class="rounded-lg task-card__done-button"
-								icon="check"
+								class="rounded-lg"
+								:class="{
+									'task-card__done-button': !task.is_completed,
+									'task-card__error-button': task.is_completed,
+								}"
+								:icon="!task.is_completed ? 'check' : 'close'"
 								variant="flat"
 								v-bind="props"
+								@click="toggleTaskCompletion(task.id)"
 							></v-btn
 						></template>
 					</v-tooltip>
@@ -58,6 +66,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import moment from "moment";
 import EmployeeTaskDetailViewDialog from "./EmployeeTaskDetailViewDialog";
 
@@ -74,6 +83,18 @@ export default {
 	methods: {
 		formatDate(date) {
 			return moment(date).format("LLL");
+		},
+		async toggleTaskCompletion(taskId) {
+			await axios
+				.post(`/api/v1/tasks/${taskId}/toggle_completion/`)
+				.then((response) => {
+					console.log("Статус задачи успешно изменён!");
+
+					this.task.is_completed = !this.task.is_completed;
+				})
+				.catch((error) => {
+					console.error(error);
+				});
 		},
 	},
 	computed: {},
@@ -97,6 +118,10 @@ export default {
 
 .task-card__done-button {
 	background-color: #00ac17;
+}
+
+.task-card__error-button {
+	background-color: #ac0000;
 }
 
 .task-card__title-wrapper {

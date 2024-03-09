@@ -1,7 +1,7 @@
 <template>
 	<v-container>
 		<div class="py-3">
-			<dir class="text-h3">Управление задачами</dir>
+			<dir class="text-h3">Управление назначенными задачами</dir>
 			<dir class="text-h5">Действия</dir>
 		</div>
 		<v-row class="py-5">
@@ -16,7 +16,12 @@
 			</v-list-item>
 		</v-row>
 		<div class="py-5">
-			<span class="text-h5">Список задач</span>
+			<v-row>
+				<v-col>
+					<span class="text-h5">Список задач</span><br />
+					<span>{{ tasks.length ? `Количество назначенных задач: ${tasks.length}` : `` }}</span>
+				</v-col>
+			</v-row>
 		</div>
 		<div
 			class="loader-progress-circular"
@@ -73,177 +78,7 @@ export default {
 			// Список категорий
 			categories: [],
 			// Список задач, назначенных текущему сотруднику
-			tasks: [
-				{
-					id: 1,
-					title: "Тест 1",
-					description: "",
-					priority: "U",
-					color: "#FF0000",
-					category: null,
-					assigned_to: null,
-					deadline: null,
-					created_at: "2024-03-07T21:15:59.501751+03:00",
-					updated_at: "2024-03-07T21:15:59.501751+03:00",
-				},
-				{
-					id: 3,
-					title: "Test 3",
-					description: "",
-					priority: "U",
-					color: "#15FF41",
-					category: null,
-					assigned_to: null,
-					deadline: null,
-					created_at: "2024-03-07T21:29:36.779965+03:00",
-					updated_at: "2024-03-07T21:29:36.779965+03:00",
-				},
-				{
-					id: 4,
-					title: "Бизнес делишки",
-					description: "Какие-то бизнес дела",
-					priority: "U",
-					color: "#B229D9",
-					category: 1,
-					assigned_to: null,
-					deadline: "2024-12-12T00:00:00+03:00",
-					created_at: "2024-03-07T23:18:20.118495+03:00",
-					updated_at: "2024-03-07T23:18:20.118495+03:00",
-				},
-				{
-					id: 5,
-					title: "Тест 4",
-					description:
-						"ААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААА",
-					priority: "U",
-					color: "#FFFFFF",
-					category: 1,
-					assigned_to: null,
-					deadline: null,
-					created_at: "2024-03-07T23:19:20.338178+03:00",
-					updated_at: "2024-03-07T23:19:20.338178+03:00",
-				},
-				{
-					id: 6,
-					title: "Тест 5",
-					description: "",
-					priority: "U",
-					color: "#FFFFFF",
-					category: null,
-					assigned_to: null,
-					deadline: null,
-					created_at: "2024-03-07T23:20:00.019770+03:00",
-					updated_at: "2024-03-07T23:20:00.019770+03:00",
-				},
-				{
-					id: 7,
-					title: "Тест 5",
-					description: "",
-					priority: "U",
-					color: "#FFFFFF",
-					category: null,
-					assigned_to: null,
-					deadline: null,
-					created_at: "2024-03-07T23:20:05.299663+03:00",
-					updated_at: "2024-03-07T23:20:05.299663+03:00",
-				},
-				{
-					id: 8,
-					title: "Тест 5",
-					description: "",
-					priority: "U",
-					color: "#FFFFFF",
-					category: null,
-					assigned_to: null,
-					deadline: null,
-					created_at: "2024-03-07T23:20:06.995350+03:00",
-					updated_at: "2024-03-07T23:20:06.995350+03:00",
-				},
-				{
-					id: 9,
-					title: "Тест 5",
-					description: "",
-					priority: "U",
-					color: "#FFFFFF",
-					category: null,
-					assigned_to: null,
-					deadline: null,
-					created_at: "2024-03-07T23:20:08.074478+03:00",
-					updated_at: "2024-03-07T23:20:08.074478+03:00",
-				},
-				{
-					id: 10,
-					title: "Тест 5",
-					description: "",
-					priority: "U",
-					color: "#FFFFFF",
-					category: null,
-					assigned_to: null,
-					deadline: null,
-					created_at: "2024-03-07T23:20:09.073198+03:00",
-					updated_at: "2024-03-07T23:20:09.073198+03:00",
-				},
-				{
-					id: 11,
-					title: "Тест 5",
-					description: "",
-					priority: "U",
-					color: "#FFFFFF",
-					category: null,
-					assigned_to: null,
-					deadline: null,
-					created_at: "2024-03-07T23:20:10.302556+03:00",
-					updated_at: "2024-03-07T23:20:10.303555+03:00",
-				},
-				{
-					id: 12,
-					title: "Тест 5",
-					description: "",
-					priority: "U",
-					color: "#FFFFFF",
-					category: null,
-					assigned_to: null,
-					deadline: null,
-					created_at: "2024-03-07T23:20:11.231360+03:00",
-					updated_at: "2024-03-07T23:20:11.231360+03:00",
-				},
-				{
-					id: 13,
-					title: "Тест 5",
-					description: "",
-					priority: "U",
-					color: "#FFFFFF",
-					category: null,
-					assigned_to: null,
-					deadline: null,
-					created_at: "2024-03-07T23:20:12.309538+03:00",
-					updated_at: "2024-03-07T23:20:12.309538+03:00",
-				},
-				{
-					id: 14,
-					title: "Тест 5",
-					description: "",
-					priority: "U",
-					color: "#FFFFFF",
-					category: null,
-					assigned_to: null,
-					deadline: null,
-					created_at: "2024-03-07T23:20:13.419591+03:00",
-					updated_at: "2024-03-07T23:20:13.419591+03:00",
-				},
-				{
-					id: 15,
-					title: "Тест 5",
-					description: "",
-					priority: "U",
-					color: "#FFFFFF",
-					category: null,
-					assigned_to: null,
-					deadline: null,
-					created_at: "2024-03-07T23:20:14.512089+03:00",
-					updated_at: "2024-03-07T23:20:14.512089+03:00",
-				},
-			],
+			tasks: [],
 			// selectedCategory: "",
 			// searchQuery: "",
 			// plug: "-",
@@ -269,10 +104,9 @@ export default {
 			});
 
 		await axios
-			.get("/api/v1/tasks/")
+			.get("/api/v1/tasks/assigned-to-me/")
 			.then((response) => {
 				this.tasks = response.data;
-				this.assignedTasks = this.tasks.filter((task) => task.assigned_to === this.$store.state.user.id);
 			})
 			.catch((error) => {
 				console.log(error);

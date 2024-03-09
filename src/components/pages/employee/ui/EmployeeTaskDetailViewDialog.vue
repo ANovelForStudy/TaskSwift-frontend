@@ -44,39 +44,21 @@
 								rows="4"
 							></v-textarea>
 
-							<v-row>
-								<v-col>
-									<v-select
-										v-model="task.category"
-										:items="categories"
-										readonly
-										item-title="name"
-										item-value="id"
-										label="Категория"
-										prepend-icon="book"
-										variant="outlined"
-										class="mb-2"
-										color="accent"
-									></v-select>
-								</v-col>
-								<v-col>
-									<v-select
-										v-model="task.assigned_to"
-										:items="users"
-										readonly
-										item-title="name"
-										item-value="id"
-										label="Исполнитель"
-										prepend-icon="person"
-										variant="outlined"
-										class="mb-2"
-										color="accent"
-									></v-select>
-								</v-col>
-							</v-row>
+							<v-select
+								v-model="task.category"
+								:items="categories"
+								readonly
+								item-title="name"
+								item-value="id"
+								label="Категория"
+								prepend-icon="book"
+								variant="outlined"
+								class="mb-2"
+								color="accent"
+							></v-select>
 
 							<v-text-field
-								v-model="task.deadline"
+								v-model="deadlineDate"
 								readonly
 								label="Дедлайн"
 								:rules="[taskDeadlineFormatValidation]"
@@ -134,12 +116,24 @@
 </template>
 
 <script>
+import moment from "moment";
+
 export default {
 	data: () => ({}),
 	props: {
 		task: {
 			type: Object,
 			required: true,
+		},
+	},
+	computed: {
+		deadlineDate() {
+			return this.formatDate(this.task.deadline);
+		},
+	},
+	methods: {
+		formatDate(date) {
+			return moment(date).format("LLL");
 		},
 	},
 };

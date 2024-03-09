@@ -1,9 +1,22 @@
 <template>
-	<v-row justify="end">
+	<v-row>
 		<v-dialog
 			v-model="dialog"
-			max-width="700px"
+			max-width="700"
+			style="background: #000000aa"
+			transition="dialog-bottom-transition"
 		>
+			<template v-slot:activator="{ props: activatorProps }">
+				<v-btn
+					class="rounded-xl"
+					variant="tonal"
+					color="accent"
+					prepend-icon="person"
+					v-bind="activatorProps"
+					>Добавить сотрудника
+				</v-btn>
+			</template>
+
 			<template v-slot:default="{ isActive }">
 				<v-card class="pa-6">
 					<v-card-title class="text-center">
@@ -106,17 +119,6 @@
 					</v-card-actions>
 				</v-card>
 			</template>
-
-			<template v-slot:activator="{ props: activatorProps }">
-				<v-btn
-					class="rounded-xl"
-					variant="tonal"
-					color="accent"
-					prepend-icon="person"
-					v-bind="activatorProps"
-					>Добавить сотрудника
-				</v-btn>
-			</template>
 		</v-dialog>
 	</v-row>
 </template>
@@ -183,5 +185,3 @@ export default {
 	},
 };
 </script>
-
-<style lang="scss" scoped></style>

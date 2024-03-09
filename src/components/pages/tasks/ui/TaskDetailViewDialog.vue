@@ -1,22 +1,23 @@
 <template>
 	<v-dialog
 		max-width="850"
-		style="background: #000000aa">
+		style="background: #000000aa"
+	>
 		<template v-slot:activator="{ props: activatorProps }">
 			<v-btn
 				class="rounded-lg"
 				v-bind="activatorProps"
 				icon="visibility"
-				variant="flat"></v-btn>
+				variant="flat"
+			></v-btn>
 		</template>
 
 		<template v-slot:default="{ isActive }">
 			<v-card
 				class="bg-card_main"
-				style="ma-0">
-				<v-card-title class="text-center py-5"
-					>Детальный вид</v-card-title
-				>
+				style="ma-0"
+			>
+				<v-card-title class="text-center py-5">Детальный вид</v-card-title>
 				<v-card-text>
 					<v-form>
 						<v-container>
@@ -29,7 +30,8 @@
 								prepend-icon="title"
 								color="accent"
 								class="mb-2"
-								required></v-text-field>
+								required
+							></v-text-field>
 
 							<v-textarea
 								v-model="task.description"
@@ -39,7 +41,8 @@
 								variant="outlined"
 								color="accent"
 								class="mb-2"
-								rows="3"></v-textarea>
+								rows="3"
+							></v-textarea>
 
 							<v-row>
 								<v-col>
@@ -53,20 +56,20 @@
 										prepend-icon="book"
 										variant="outlined"
 										class="mb-2"
-										color="accent"></v-select>
+										color="accent"
+									></v-select>
 								</v-col>
 								<v-col>
 									<v-select
 										v-model="task.assigned_to"
-										:items="users"
+										:items="employeeItems"
 										readonly
-										item-title="name"
-										item-value="id"
 										label="Исполнитель"
 										prepend-icon="person"
 										variant="outlined"
 										class="mb-2"
-										color="accent"></v-select>
+										color="accent"
+									></v-select>
 								</v-col>
 							</v-row>
 
@@ -79,7 +82,8 @@
 								prepend-icon="local_fire_department"
 								color="accent"
 								class="mb-2"
-								hint="В формате ГГГГ-ММ-ДД"></v-text-field>
+								hint="В формате ГГГГ-ММ-ДД"
+							></v-text-field>
 
 							<v-container class="pa-0">
 								<v-row>
@@ -93,9 +97,9 @@
 												mode="hex"
 												hide-inputs
 												hide-swatches
-												:swatches-max-height="
-													80
-												"></v-color-picker>
+												disabled
+												:swatches-max-height="80"
+											></v-color-picker>
 										</v-container>
 
 										<v-text-field
@@ -105,7 +109,8 @@
 											prepend-icon="palette"
 											readonly
 											color="accent"
-											hint="Только для чтения"></v-text-field>
+											hint="Только для чтения"
+										></v-text-field>
 									</v-col>
 									<v-col> </v-col>
 								</v-row>
@@ -127,6 +132,8 @@
 </template>
 
 <script>
+import { getEmployees } from "@/services/api/apiUsersService";
+
 export default {
 	data: () => ({}),
 	props: {
@@ -134,6 +141,19 @@ export default {
 			type: Object,
 			required: true,
 		},
+		employees: {
+			type: Array,
+			required: true,
+		},
 	},
+	computed: {
+		employeeItems() {
+			return this.employees.map((employee) => ({
+				title: `${employee.last_name || ""} ${employee.first_name || ""} ${employee.middle_name || ""} - ${employee.email}`,
+				value: employee.id,
+			}));
+		},
+	},
+	methods: {},
 };
 </script>

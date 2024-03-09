@@ -1,34 +1,25 @@
 <template>
 	<v-card
 		class="bg-card_main"
-		elevation="6">
+		elevation="6"
+	>
 		<div>
 			<div class="task-card__title">
 				<div class="task-card__edge bg-secondary"></div>
 				<div class="py-2 bg-card_header">
 					<div class="task-card__title-wrapper">
-						<v-card-title primary-title>{{
-							task.title
-						}}</v-card-title>
+						<v-card-title primary-title>{{ task.title }}</v-card-title>
 
 						<div
 							class="task-card__circle-indicator rounded-circle mx-3"
 							:style="{
 								backgroundColor: task.color || 'white',
-							}"></div>
+							}"
+						></div>
 					</div>
-					<v-card-subtitle
-						>Категория:
-						{{
-							task.category ? task.category : "Без категории"
-						}}</v-card-subtitle
-					>
-					<v-card-subtitle
-						>Исполнитель:
-						{{
-							task.assigned_to ? task.assigned_to : "Не назначен"
-						}}</v-card-subtitle
-					>
+					<v-card-subtitle>Категория: {{ task.category ? task.category : "Без категории" }}</v-card-subtitle>
+					<v-card-subtitle>Исполнитель: {{ getEmployeeNameById(task.assigned_to) }}</v-card-subtitle>
+					<v-card-subtitle>Статус: {{ task.is_completed || "Не установлен" }}</v-card-subtitle>
 				</div>
 			</div>
 			<v-card-text class="bg-card_body text-truncate">
@@ -38,49 +29,42 @@
 		<v-card-actions class="justify-end bg-card_footer">
 			<v-row class="py-3">
 				<div class="task-card__dates my-auto">
-					<v-card-subtitle
-						>Дедлайн:
-						{{
-							task.deadline
-								? formatDate(task.deadline)
-								: "Не установлен"
-						}}</v-card-subtitle
-					>
-					<v-card-subtitle
-						>Создана:
-						{{ formatDate(task.created_at) }}</v-card-subtitle
-					>
-					<v-card-subtitle
-						>Изменена:
-						{{ formatDate(task.updated_at) }}</v-card-subtitle
-					>
+					<v-card-subtitle>Дедлайн: {{ task.deadline ? formatDate(task.deadline) : "Не установлен" }}</v-card-subtitle>
+					<v-card-subtitle>Создана: {{ formatDate(task.created_at) }}</v-card-subtitle>
+					<v-card-subtitle>Изменена: {{ formatDate(task.updated_at) }}</v-card-subtitle>
 				</div>
 				<v-spacer></v-spacer>
 				<div class="px-3 ms-auto my-auto">
 					<TaskDetailViewDialog
 						:task="task"
-						v-bind="props"></TaskDetailViewDialog>
+						:employees="employees"
+						v-bind="props"
+					></TaskDetailViewDialog>
 
 					<v-tooltip
 						text="Изменить"
-						location="bottom">
+						location="bottom"
+					>
 						<template v-slot:activator="{ props }">
 							<v-btn
 								class="rounded-lg"
 								icon="edit"
 								variant="flat"
-								v-bind="props"></v-btn
+								v-bind="props"
+							></v-btn
 						></template> </v-tooltip
 					><v-tooltip
 						text="Удалить"
-						location="bottom">
+						location="bottom"
+					>
 						<template v-slot:activator="{ props }"
 							><v-btn
 								class="rounded-lg task-card__delete-button"
 								icon="delete"
 								variant="flat"
 								@click="$emit('deleteTask', task.id)"
-								v-bind="props"></v-btn
+								v-bind="props"
+							></v-btn
 						></template>
 					</v-tooltip>
 				</div>
@@ -102,10 +86,18 @@ export default {
 			type: Object,
 			required: true,
 		},
+		employees: {
+			type: Array,
+			required: true,
+		},
 	},
 	methods: {
 		formatDate(date) {
 			return moment(date).format("LLL");
+		},
+		getEmployeeNameById(employeeId) {
+			const employee = this.employees.find((employee) => employee.id === employeeId);
+			return employee ? `${employee.first_name} ${employee.last_name} - ${employee.email}` : "Не назначен";
 		},
 	},
 	computed: {},

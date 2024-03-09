@@ -2,7 +2,7 @@
 node_modules
 /dist
 TODO.txt
-old
+/old/*
 
 
 # local env files

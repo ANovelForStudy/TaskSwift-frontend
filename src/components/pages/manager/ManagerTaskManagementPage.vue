@@ -55,6 +55,7 @@
 			>
 				<TaskCardComponent
 					:task="task"
+					:employees="employees"
 					@deleteTask="deleteTask"
 				></TaskCardComponent>
 			</v-col>
@@ -82,9 +83,13 @@ import TaskCardComponent from "@/components/pages/tasks/ui/TaskCardComponent";
 import CreateTaskDialog from "@/components/pages/tasks/ui/CreateTaskDialog";
 import CreateTaskCategoryDialog from "@/components/pages/tasks/ui/CreateTaskCategoryDialog";
 
+import { getAllTasks, getTaskCategories, getEmployees } from "@/services/api/apiUsersService";
+
 export default {
 	data() {
 		return {
+			// Список сотрудников
+			employees: [],
 			// Список категорий
 			categories: [],
 			// Список задач
@@ -127,34 +132,34 @@ export default {
 			this.snackbar_text = "Категория задач успешно создана!";
 			this.snackbar = true;
 		},
+		async getEmployees() {
+			await axios
+				.get("/api/v1/users/employees/")
+				.then((response) => {
+					this.employees = response.data;
+				})
+				.catch((error) => {
+					console.log(error);
+				})
+				.finally(() => {
+					this.loading = false;
+				});
+		},
 	},
 	async created() {
-		await axios
-			.get("/api/v1/tasks/categories/")
-			.then((response) => {
-				this.categories = response.data;
-			})
-			.catch((error) => {
-				console.log(error);
-			});
+		try {
+			this.categories = await getTaskCategories();
 
-		await axios
-			.get("/api/v1/tasks/")
-			.then((response) => {
-				this.tasks = response.data.map((task) => ({
-					...task,
-					// category: task.category || { category: this.plug },
-					// assigned_to: task.assigned_to || { assigned_to: this.plug },
-				}));
+			this.progressCircular = true;
 
-				this.tasks = response.data;
-			})
-			.catch((error) => {
-				console.log(error);
-			})
-			.finally(() => {
-				this.progressCircular = false;
-			});
+			this.tasks = await getAllTasks();
+		} catch (error) {
+			console.log(error);
+		} finally {
+			this.progressCircular = false;
+		}
+
+		this.employees = await getEmployees();
 	},
 };
 </script>
