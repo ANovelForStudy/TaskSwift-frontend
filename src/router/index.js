@@ -6,9 +6,6 @@ import LoginPage from "@/components/pages/auth/LoginPage";
 // Общие страницы
 import AboutPage from "@/components/pages/base/AboutPage";
 
-// Страницы администратора
-import AdminDashboardPage from "@/components/pages/admin/AdminDashboardPage";
-
 // Страницы работника
 import EmployeeDashboardPage from "@/components/pages/employee/EmployeeDashboardPage";
 import EmployeeTaskManagementPage from "@/components/pages/employee/EmployeeTaskManagementPage";
@@ -21,16 +18,14 @@ import ManagerEmployeeManagementPage from "@/components/pages/manager/ManagerEmp
 import AccountPage from "@/components/pages/AccountPage";
 import FeedbackPage from "@/components/pages/FeedbackPage";
 
-// Tasks
-import TaskManagementPage from "@/components/pages/tasks/TaskManagementPage";
-import CreateTaskPage from "@/components/pages/tasks/CreateTaskPage";
-
 // Ошибки
 import Error404Page from "@/components/pages/base/errors/Error404Page";
 
+// Vuex
 import store from "@/store";
 
-import Roles from "./roles.js";
+// Enum роли пользователей
+import Roles from "@/services/roles.js";
 
 const routes = [
 	{

@@ -5,7 +5,7 @@
 			<dir class="text-h5">Действия</dir>
 		</div>
 		<v-row class="py-5">
-			<v-list-item><AddEmployeeDialogVue @addEmployee="addEmployee"></AddEmployeeDialogVue></v-list-item>
+			<v-list-item><AddEmployeeDialog @addEmployee="addEmployee"></AddEmployeeDialog></v-list-item>
 			<v-list-item><ActionButton>Назначить сотруднику задачу</ActionButton></v-list-item>
 		</v-row>
 		<div class="py-5">
@@ -13,15 +13,13 @@
 		</div>
 		<div class="pb-7 pt-2">
 			<v-row>
-				<v-list-item
-					><v-btn
-						class="rounded-xl"
-						variant="tonal"
+				<v-list-item>
+					<ActionButton
+						icon="delete"
 						color="error"
-						prepend-icon="delete"
 						@click="deleteSelectedEmployees"
-						>Удалить выбранных сотрудников
-					</v-btn></v-list-item
+						>Удалить выбранных сотрудников</ActionButton
+					></v-list-item
 				>
 			</v-row>
 		</div>
@@ -72,8 +70,8 @@
 import moment from "moment";
 import axios from "axios";
 
-import ActionButton from "@/components/ui/ActionButton.vue";
-import AddEmployeeDialogVue from "./ui/AddEmployeeDialog.vue";
+import ActionButton from "@/components/ui/ActionButton";
+import AddEmployeeDialog from "./ui/AddEmployeeDialog";
 
 export default {
 	data: () => ({
@@ -96,7 +94,7 @@ export default {
 	}),
 	components: {
 		ActionButton,
-		AddEmployeeDialogVue,
+		AddEmployeeDialog,
 	},
 	created() {
 		this.loading = true;

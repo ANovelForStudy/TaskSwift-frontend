@@ -37,7 +37,7 @@
 				<v-list-item
 					v-if="!loading && userData"
 					:prepend-avatar="userData.profile_picture || `https://ui-avatars.com/api/?name=${userData.first_name}+${userData.last_name}`"
-					:title="userData.first_name + ' ' + userData.last_name + ' ' + userData.user_type"
+					:title="userData.first_name + ' ' + userData.last_name"
 					:subtitle="userData.email"
 					to="/account"
 					color="accent"
@@ -124,7 +124,7 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import Roles from "@/router/roles";
+import Roles from "@/services/roles";
 
 export default {
 	data: () => ({

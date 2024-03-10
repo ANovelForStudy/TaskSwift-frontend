@@ -6,13 +6,7 @@
 		</div>
 		<v-row class="py-5">
 			<v-list-item>
-				<v-btn
-					class="rounded-xl"
-					prepend-icon="message"
-					variant="tonal"
-					color="accent"
-					>Связаться с руководителем</v-btn
-				>
+				<ActionButton icon="message">Связаться с руководителем</ActionButton>
 			</v-list-item>
 		</v-row>
 		<div class="py-5">
@@ -71,6 +65,7 @@
 <script>
 import axios from "axios";
 import EmployeeTaskCardComponent from "./ui/EmployeeTaskCardComponent";
+import ActionButton from "@/components/ui/ActionButton";
 
 export default {
 	data() {
@@ -91,6 +86,7 @@ export default {
 	},
 	components: {
 		EmployeeTaskCardComponent,
+		ActionButton,
 	},
 	methods: {},
 	async created() {

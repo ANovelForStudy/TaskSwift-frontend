@@ -35,11 +35,11 @@
 				</div>
 				<v-spacer></v-spacer>
 				<div class="px-3 ms-auto my-auto">
-					<TaskDetailViewDialog
+					<ManagerTaskDetailViewDialog
 						:task="task"
 						:employees="employees"
 						v-bind="props"
-					></TaskDetailViewDialog>
+					></ManagerTaskDetailViewDialog>
 
 					<v-tooltip
 						text="Изменить"
@@ -75,11 +75,11 @@
 
 <script>
 import moment from "moment";
-import TaskDetailViewDialog from "@/components/pages/tasks/ui/TaskDetailViewDialog";
+import ManagerTaskDetailViewDialog from "@/components/pages/manager/ui/ManagerTaskDetailViewDialog";
 
 export default {
 	components: {
-		TaskDetailViewDialog,
+		ManagerTaskDetailViewDialog,
 	},
 	props: {
 		task: {

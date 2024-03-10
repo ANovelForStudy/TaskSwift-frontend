@@ -6,13 +6,10 @@
 		v-model="dialog"
 	>
 		<template v-slot:activator="{ props: activatorProps }">
-			<v-btn
+			<ActionButton
+				icon="add_task"
 				v-bind="activatorProps"
-				class="rounded-xl"
-				prepend-icon="add_task"
-				variant="tonal"
-				color="accent"
-				>Добавить новую задачу</v-btn
+				>Добавить новую задачу</ActionButton
 			>
 		</template>
 
@@ -150,6 +147,8 @@
 <script>
 import axios from "axios";
 
+import ActionButton from "@/components/ui/ActionButton";
+
 import { getEmployees } from "@/services/api/apiUsersService";
 
 export default {
@@ -172,6 +171,9 @@ export default {
 			type: Array,
 			required: true,
 		},
+	},
+	components: {
+		ActionButton,
 	},
 	computed: {
 		employeeItems() {

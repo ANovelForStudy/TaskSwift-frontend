@@ -6,13 +6,10 @@
 		transition="dialog-bottom-transition"
 	>
 		<template v-slot:activator="{ props: activatorProps }">
-			<v-btn
+			<ActionButton
+				icon="category"
 				v-bind="activatorProps"
-				class="rounded-xl"
-				prepend-icon="category"
-				variant="tonal"
-				color="accent"
-				>Добавить новую категорию</v-btn
+				>Добавить новую категорию</ActionButton
 			>
 		</template>
 
@@ -111,6 +108,8 @@
 <script>
 import axios from "axios";
 
+import ActionButton from "@/components/ui/ActionButton";
+
 export default {
 	data: () => ({
 		category: {
@@ -120,6 +119,9 @@ export default {
 		},
 		dialog: false,
 	}),
+	components: {
+		ActionButton,
+	},
 	methods: {
 		categoryNameLengthValidation(value) {
 			return this.category.name !== "" || "Название обязательно";

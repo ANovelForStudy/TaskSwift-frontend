@@ -14,15 +14,6 @@
 			<v-list-item>
 				<CreateTaskCategoryDialog @createTaskCategory="createTaskCategory"></CreateTaskCategoryDialog>
 			</v-list-item>
-			<v-list-item
-				><v-btn
-					class="rounded-xl"
-					prepend-icon="link"
-					variant="tonal"
-					color="accent"
-					>Назначить задачу</v-btn
-				></v-list-item
-			>
 		</v-row>
 		<div class="py-5">
 			<span class="text-h5">Список задач</span>
@@ -53,11 +44,11 @@
 				v-for="task in tasks"
 				:key="task.id"
 			>
-				<TaskCardComponent
+				<ManagerTaskCardComponent
 					:task="task"
 					:employees="employees"
 					@deleteTask="deleteTask"
-				></TaskCardComponent>
+				></ManagerTaskCardComponent>
 			</v-col>
 		</v-row>
 
@@ -79,9 +70,9 @@
 
 <script>
 import axios from "axios";
-import TaskCardComponent from "@/components/pages/tasks/ui/TaskCardComponent";
-import CreateTaskDialog from "@/components/pages/tasks/ui/CreateTaskDialog";
-import CreateTaskCategoryDialog from "@/components/pages/tasks/ui/CreateTaskCategoryDialog";
+import ManagerTaskCardComponent from "@/components/pages/manager/ui/ManagerTaskCardComponent";
+import CreateTaskDialog from "@/components/pages/manager/ui/CreateTaskDialog";
+import CreateTaskCategoryDialog from "@/components/pages/manager/ui/CreateTaskCategoryDialog";
 
 import { getAllTasks, getTaskCategories, getEmployees } from "@/services/api/apiUsersService";
 
@@ -105,7 +96,7 @@ export default {
 		};
 	},
 	components: {
-		TaskCardComponent,
+		ManagerTaskCardComponent,
 		CreateTaskDialog,
 		CreateTaskCategoryDialog,
 	},
