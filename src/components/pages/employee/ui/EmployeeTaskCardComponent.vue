@@ -17,7 +17,7 @@
 							}"
 						></div>
 					</div>
-					<v-card-subtitle>Категория: {{ task.category ? task.category : "Без категории" }}</v-card-subtitle>
+					<v-card-subtitle>Категория: {{ task.category ? category?.name : "Без категории" }}</v-card-subtitle>
 					<v-card-subtitle
 						>Статус:
 						{{ task.is_completed !== undefined ? (task.is_completed ? "Выполнена" : "Не выполнена") : "Не установлен" }}</v-card-subtitle
@@ -79,6 +79,10 @@ export default {
 			type: Object,
 			required: true,
 		},
+		category: {
+			type: Object,
+			required: false,
+		},
 	},
 	methods: {
 		formatDate(date) {
@@ -88,14 +92,17 @@ export default {
 			await axios
 				.post(`/api/v1/tasks/${taskId}/toggle_completion/`)
 				.then((response) => {
-					console.log("Статус задачи успешно изменён!");
-
 					this.task.is_completed = !this.task.is_completed;
+
+					this.$emit("filterTasks");
 				})
 				.catch((error) => {
 					console.error(error);
 				});
 		},
+	},
+	created() {
+		console.log(this.category);
 	},
 	computed: {},
 };

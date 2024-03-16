@@ -73,6 +73,8 @@ import axios from "axios";
 import ActionButton from "@/components/ui/ActionButton";
 import AddEmployeeDialog from "./ui/AddEmployeeDialog";
 
+import useSortedTasks from "@/hooks/useSortedTasks";
+
 export default {
 	data: () => ({
 		selected: [],

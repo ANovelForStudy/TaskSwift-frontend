@@ -13,8 +13,60 @@
 			<v-row>
 				<v-col>
 					<span class="text-h5">Список задач</span><br />
-					<span>{{ tasks.length ? `Количество назначенных задач: ${tasks.length}` : `` }}</span>
+					<span>{{ originTasks.length ? `Количество назначенных задач: ${originTasks.length}` : `` }}</span>
 				</v-col>
+			</v-row>
+			<v-row>
+				<v-col lg="3">
+					<v-select
+						v-model="sortBy"
+						:items="sortOptions"
+						label="Сортировка"
+						item-title="label"
+						item-value="value"
+						prepend-inner-icon="sort_by_alpha"
+						variant="outlined"
+						color="accent"
+						@update:model-value="sortTasks"
+					></v-select>
+					<v-btn
+						class="rounded-xl"
+						variant="tonal"
+						color="accent"
+						@click="reverseSortOrder"
+					>
+						{{ sortOrder === "asc" ? "По возрастанию" : "По убыванию" }}
+						<template v-slot:prepend>
+							<v-icon>{{ sortOrder === "asc" ? "expand_more" : "expand_less" }}</v-icon>
+						</template>
+					</v-btn>
+				</v-col>
+				<v-col lg="3"
+					><v-select
+						v-model="filterBy"
+						:items="filterOptions"
+						label="Фильтрация"
+						item-title="label"
+						item-value="value"
+						prepend-inner-icon="filter_alt"
+						variant="outlined"
+						color="accent"
+						@update:model-value="filterTasks"
+					></v-select
+				></v-col>
+				<v-col lg="3"
+					><v-select
+						v-model="filterCategory"
+						:items="[{ name: 'Все категории', id: null }, ...categories]"
+						item-title="name"
+						item-value="id"
+						label="Фильтрация по категории"
+						prepend-inner-icon="bookmarks"
+						variant="outlined"
+						color="accent"
+						@update:model-value="filterTasks"
+					></v-select
+				></v-col>
 			</v-row>
 		</div>
 		<div
@@ -43,7 +95,11 @@
 				v-for="task in tasks"
 				:key="task.id"
 			>
-				<EmployeeTaskCardComponent :task="task"></EmployeeTaskCardComponent>
+				<EmployeeTaskCardComponent
+					@filterTasks="filterTasks"
+					:task="task"
+					:category="categories.find((cat) => cat.id === task.category)"
+				></EmployeeTaskCardComponent>
 			</v-col>
 		</v-row>
 
@@ -70,12 +126,31 @@ import ActionButton from "@/components/ui/ActionButton";
 export default {
 	data() {
 		return {
+			// Выбранная опция сортировки
+			sortBy: "deadline",
+			// Направление сортировки
+			sortOrder: "asc",
+			// Все опции сортировки
+			sortOptions: [
+				{ label: "Дате создания", value: "created_at" },
+				{ label: "Дедлайну", value: "deadline" },
+			],
+			// Выбранная опция фильтрации
+			filterBy: null,
+			// Категория, по которой будет происходить фильтрация
+			filterCategory: null,
+			// Все опции фильтрации
+			filterOptions: [
+				{ label: "Все задачи", value: null },
+				{ label: "Завершены", value: true },
+				{ label: "Не завершены", value: false },
+			],
 			// Список категорий
 			categories: [],
-			// Список задач, назначенных текущему сотруднику
+			// Массив задач, назначенных текущему сотруднику
 			tasks: [],
-			// selectedCategory: "",
-			// searchQuery: "",
+			// Исходный массив задач
+			originTasks: [],
 			// plug: "-",
 			// Уведомление снизу об успешном создании задачи
 			snackbar: false,
@@ -88,7 +163,39 @@ export default {
 		EmployeeTaskCardComponent,
 		ActionButton,
 	},
-	methods: {},
+	methods: {
+		// Метод сортировки задач
+		sortTasks() {
+			switch (this.sortBy) {
+				case "created_at":
+					this.tasks.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+					break;
+				case "deadline":
+					this.tasks.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+					break;
+			}
+		},
+		reverseSortOrder() {
+			this.sortOrder = this.sortOrder === "asc" ? "desc" : "asc";
+
+			this.tasks.reverse();
+		},
+		// Метод фильтрации задач
+		filterTasks() {
+			let filteredTasks = this.originTasks.slice();
+
+			if (this.filterBy !== null) {
+				filteredTasks = filteredTasks.filter((task) => task.is_completed === this.filterBy);
+			}
+
+			if (this.filterCategory !== null) {
+				filteredTasks = filteredTasks.filter((task) => task?.category === this.filterCategory);
+			}
+
+			this.tasks = filteredTasks;
+			this.sortTasks();
+		},
+	},
 	async created() {
 		await axios
 			.get("/api/v1/tasks/categories/")
@@ -110,6 +217,11 @@ export default {
 			.finally(() => {
 				this.progressCircular = false;
 			});
+
+		// Делаю исходную неизменённую копию массива задач
+		this.originTasks = [...this.tasks];
+
+		this.sortTasks();
 	},
 };
 </script>
