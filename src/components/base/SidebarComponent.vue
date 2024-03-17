@@ -171,12 +171,6 @@ export default {
 			this.$router.push({ name: "Login" });
 		},
 	},
-	created() {
-		console.log(this.userRoles);
-
-		console.log(this.$store.state?.user?.data?.user_type);
-		console.log(this.userRoles.Employee);
-	},
 };
 </script>
 

@@ -90,18 +90,12 @@ export default {
 				.post(`/api/v1/tasks/${taskId}/toggle_completion/`)
 				.then((response) => {
 					this.task.is_completed = !this.task.is_completed;
-
-					this.$emit("filterTasks");
 				})
 				.catch((error) => {
 					console.error(error);
 				});
 		},
 	},
-	created() {
-		console.log(this.category);
-	},
-	computed: {},
 };
 </script>
 

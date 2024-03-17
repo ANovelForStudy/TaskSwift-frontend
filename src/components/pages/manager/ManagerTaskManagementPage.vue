@@ -144,7 +144,7 @@ import CreateTaskCategoryDialog from "@/components/pages/manager/ui/CreateTaskCa
 import useSortedTasks from "@/hooks/common/useSortedTasks";
 import getManagerTasks from "@/hooks/manager/getManagerTasks";
 import getManagerEmployees from "@/hooks/manager/getManagerEmployees";
-import getManagerTaskCategories from "@/hooks/manager/getManagerTaskCategories";
+import getTaskCategories from "@/hooks/common/getTaskCategories";
 import useStatusFilteredTasks from "@/hooks/common/useStatusFilteredTasks";
 import useCategoryFilteredTasks from "@/hooks/common/useCategoryFilteredTasks";
 import useSearchTasks from "@/hooks/common/useSearchTasks";
@@ -152,9 +152,6 @@ import useSearchTasks from "@/hooks/common/useSearchTasks";
 export default {
 	data() {
 		return {
-			// searchQuery: "",
-			// plug: "-",
-
 			// Уведомление снизу об успешном создании задачи
 			snackbar: false,
 			snackbar_text: "",
@@ -163,7 +160,7 @@ export default {
 	setup(props) {
 		// Получение данных из API
 		const { employees } = getManagerEmployees();
-		const { taskCategories } = getManagerTaskCategories();
+		const { taskCategories } = getTaskCategories();
 		const { tasks, isTasksLoading } = getManagerTasks();
 
 		// Фильтрация задач по статусу

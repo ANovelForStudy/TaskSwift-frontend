@@ -13,13 +13,13 @@
 			<v-row>
 				<v-col>
 					<span class="text-h5">Список задач</span><br />
-					<span>{{ originTasks.length ? `Количество назначенных задач: ${originTasks.length}` : `` }}</span>
+					<span>{{ tasks.length ? `Всего задач: ${tasks.length}` : `` }}</span>
 				</v-col>
 			</v-row>
 			<v-row>
 				<v-col lg="3">
 					<v-select
-						v-model="sortBy"
+						v-model="selectedSortOption"
 						:items="sortOptions"
 						label="Сортировка"
 						item-title="label"
@@ -27,51 +27,58 @@
 						prepend-inner-icon="sort_by_alpha"
 						variant="outlined"
 						color="accent"
-						@update:model-value="sortTasks"
 					></v-select>
 					<v-btn
 						class="rounded-xl"
 						variant="tonal"
 						color="accent"
-						@click="reverseSortOrder"
+						@click="toggleSortDirection"
 					>
-						{{ sortOrder === "asc" ? "По возрастанию" : "По убыванию" }}
+						{{ isSortAscending ? "По возрастанию" : "По убыванию" }}
 						<template v-slot:prepend>
-							<v-icon>{{ sortOrder === "asc" ? "expand_more" : "expand_less" }}</v-icon>
+							<v-icon>{{ isSortAscending ? "expand_less" : "expand_more" }}</v-icon>
 						</template>
 					</v-btn>
 				</v-col>
 				<v-col lg="3"
 					><v-select
-						v-model="filterBy"
-						:items="filterOptions"
-						label="Фильтрация"
+						v-model="selectedFilterOption"
+						:items="statusFilterOptions"
+						label="Фильтрация по статусу"
 						item-title="label"
 						item-value="value"
 						prepend-inner-icon="filter_alt"
 						variant="outlined"
 						color="accent"
-						@update:model-value="filterTasks"
 					></v-select
 				></v-col>
 				<v-col lg="3"
 					><v-select
-						v-model="filterCategory"
-						:items="[{ name: 'Все категории', id: null }, ...categories]"
+						v-model="selectedFilterCategory"
+						:items="[{ name: 'Все категории', id: 'all' }, { name: 'Без категории', id: null }, ...taskCategories]"
 						item-title="name"
 						item-value="id"
 						label="Фильтрация по категории"
 						prepend-inner-icon="bookmarks"
 						variant="outlined"
 						color="accent"
-						@update:model-value="filterTasks"
-					></v-select
+					></v-select></v-col
+				><v-col lg="3">
+					<v-text-field
+						v-model="searchQuery"
+						label="Поиск"
+						class="mb-2"
+						prepend-inner-icon="search"
+						variant="outlined"
+						color="accent"
+					></v-text-field
 				></v-col>
 			</v-row>
 		</div>
+
 		<div
 			class="loader-progress-circular"
-			v-if="progressCircular"
+			v-if="isTasksLoading"
 		>
 			<div class="rounded-circle bg-sidebar pa-3">
 				<v-progress-circular
@@ -83,24 +90,26 @@
 				></v-progress-circular>
 			</div>
 		</div>
+
 		<div
-			v-if="!tasks.length && !progressCircular"
+			v-if="!tasks.length && !isTasksLoading"
 			class="text-center py-10"
 		>
 			<h3>Нет назначенных задач</h3>
 		</div>
+
 		<v-row>
-			<v-col
-				sm="4"
-				v-for="task in tasks"
-				:key="task.id"
-			>
-				<EmployeeTaskCardComponent
-					@filterTasks="filterTasks"
-					:task="task"
-					:category="categories.find((cat) => cat.id === task.category)"
-				></EmployeeTaskCardComponent>
-			</v-col>
+			<transition-group name="list">
+				<v-col
+					sm="4"
+					v-for="task in sortedTasks"
+					:key="task.id"
+				>
+					<EmployeeTaskCardComponent
+						:task="task"
+						:category="taskCategories.find((cat) => cat.id === task.category)"
+					></EmployeeTaskCardComponent> </v-col
+			></transition-group>
 		</v-row>
 
 		<v-snackbar v-model="snackbar">
@@ -120,109 +129,94 @@
 
 <script>
 import axios from "axios";
+
 import EmployeeTaskCardComponent from "./ui/EmployeeTaskCardComponent";
 import ActionButton from "@/components/ui/ActionButton";
+
+import useSortedTasks from "@/hooks/common/useSortedTasks";
+import getEmployeeTasks from "@/hooks/employee/getEmployeeTasks";
+import getTaskCategories from "@/hooks/common/getTaskCategories";
+import useStatusFilteredTasks from "@/hooks/common/useStatusFilteredTasks";
+import useCategoryFilteredTasks from "@/hooks/common/useCategoryFilteredTasks";
+import useSearchTasks from "@/hooks/common/useSearchTasks";
 
 export default {
 	data() {
 		return {
-			// Выбранная опция сортировки
-			sortBy: "deadline",
-			// Направление сортировки
-			sortOrder: "asc",
-			// Все опции сортировки
-			sortOptions: [
-				{ label: "Дате создания", value: "created_at" },
-				{ label: "Дедлайну", value: "deadline" },
-			],
-			// Выбранная опция фильтрации
-			filterBy: null,
-			// Категория, по которой будет происходить фильтрация
-			filterCategory: null,
-			// Все опции фильтрации
-			filterOptions: [
-				{ label: "Все задачи", value: null },
-				{ label: "Завершены", value: true },
-				{ label: "Не завершены", value: false },
-			],
-			// Список категорий
-			categories: [],
-			// Массив задач, назначенных текущему сотруднику
-			tasks: [],
-			// Исходный массив задач
-			originTasks: [],
-			// plug: "-",
 			// Уведомление снизу об успешном создании задачи
 			snackbar: false,
 			snackbar_text: "",
-			// Прогрессбар во время загрузки списка задач
-			progressCircular: true,
+		};
+	},
+	setup(props) {
+		// Получение данных из API
+		const { taskCategories } = getTaskCategories();
+		const { tasks, isTasksLoading } = getEmployeeTasks();
+
+		// Фильтрация задач по статусу
+		const { statusFilterOptions, selectedFilterOption, statusFilteredTasks } = useStatusFilteredTasks(tasks);
+
+		// Фильтрация задач по категории
+		const { selectedFilterCategory, categoryFilteredTasks } = useCategoryFilteredTasks(statusFilteredTasks);
+
+		// Поиск задач
+		const { searchedTasks, searchQuery } = useSearchTasks(categoryFilteredTasks);
+
+		// Сортировка задач
+		const { selectedSortOption, sortOptions, sortedTasks, toggleSortDirection, isSortAscending } = useSortedTasks(searchedTasks);
+
+		return {
+			// Данные
+			tasks,
+			taskCategories,
+
+			// Состояние загрузки данных
+			isTasksLoading,
+
+			// Сортировка
+			selectedSortOption,
+			sortOptions,
+			sortedTasks,
+			toggleSortDirection,
+			isSortAscending,
+
+			// Фильтрация по статусу
+			statusFilterOptions,
+			selectedFilterOption,
+			statusFilteredTasks,
+
+			// Фильтрация по категории
+			selectedFilterCategory,
+			categoryFilteredTasks,
+
+			// Поиск
+			searchedTasks,
+			searchQuery,
 		};
 	},
 	components: {
 		EmployeeTaskCardComponent,
 		ActionButton,
 	},
-	methods: {
-		// Метод сортировки задач
-		sortTasks() {
-			switch (this.sortBy) {
-				case "created_at":
-					this.tasks.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-					break;
-				case "deadline":
-					this.tasks.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
-					break;
-			}
-		},
-		reverseSortOrder() {
-			this.sortOrder = this.sortOrder === "asc" ? "desc" : "asc";
+	methods: {},
+	// async created() {
+	// 	await axios
+	// 		.get("/api/v1/tasks/assigned-to-me/")
+	// 		.then((response) => {
+	// 			this.tasks = response.data;
+	// 		})
+	// 		.catch((error) => {
+	// 			console.log(error);
+	// 		})
+	// 		.finally(() => {
+	// 			this.progressCircular = false;
+	// 		});
 
-			this.tasks.reverse();
-		},
-		// Метод фильтрации задач
-		filterTasks() {
-			let filteredTasks = this.originTasks.slice();
+	// 	// Делаю исходную неизменённую копию массива задач
+	// 	this.originTasks = [...this.tasks];
 
-			if (this.filterBy !== null) {
-				filteredTasks = filteredTasks.filter((task) => task.is_completed === this.filterBy);
-			}
-
-			if (this.filterCategory !== null) {
-				filteredTasks = filteredTasks.filter((task) => task?.category === this.filterCategory);
-			}
-
-			this.tasks = filteredTasks;
-			this.sortTasks();
-		},
-	},
-	async created() {
-		await axios
-			.get("/api/v1/tasks/categories/")
-			.then((response) => {
-				this.categories = response.data;
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-
-		await axios
-			.get("/api/v1/tasks/assigned-to-me/")
-			.then((response) => {
-				this.tasks = response.data;
-			})
-			.catch((error) => {
-				console.log(error);
-			})
-			.finally(() => {
-				this.progressCircular = false;
-			});
-
-		// Делаю исходную неизменённую копию массива задач
-		this.originTasks = [...this.tasks];
-
-		this.sortTasks();
-	},
+	// 	this.sortTasks();
+	// },
 };
 </script>
 
@@ -233,5 +227,15 @@ export default {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
+}
+
+.list-enter-active,
+.list-leave-active {
+	transition: all 0.23s ease;
+}
+.list-enter-from,
+.list-leave-to {
+	opacity: 0;
+	transform: translateX(30px);
 }
 </style>
