@@ -48,29 +48,36 @@
 				</v-col>
 				<v-col lg="3"
 					><v-select
-						v-model="filterBy"
-						:items="filterOptions"
+						v-model="selectedFilterOption"
+						:items="statusFilterOptions"
 						label="Фильтрация по статусу"
 						item-title="label"
 						item-value="value"
 						prepend-inner-icon="filter_alt"
 						variant="outlined"
 						color="accent"
-						@update:model-value="filterTasks"
 					></v-select
 				></v-col>
 				<v-col lg="3"
 					><v-select
-						v-model="filterCategory"
-						:items="[{ name: 'Все категории', id: null }, ...taskCategories]"
+						v-model="selectedFilterCategory"
+						:items="[{ name: 'Все категории', id: 'all' }, { name: 'Без категории', id: null }, ...taskCategories]"
 						item-title="name"
 						item-value="id"
 						label="Фильтрация по категории"
 						prepend-inner-icon="bookmarks"
 						variant="outlined"
 						color="accent"
-						@update:model-value="filterTasks"
-					></v-select
+					></v-select></v-col
+				><v-col lg="3">
+					<v-text-field
+						v-model="searchQuery"
+						label="Поиск"
+						class="mb-2"
+						prepend-inner-icon="search"
+						variant="outlined"
+						color="accent"
+					></v-text-field
 				></v-col>
 			</v-row>
 		</div>
@@ -95,18 +102,20 @@
 			<h3>Задачи ещё не были созданы</h3>
 		</div>
 		<v-row>
-			<v-col
-				sm="4"
-				v-for="task in sortedTasks"
-				:key="task.id"
-			>
-				<ManagerTaskCardComponent
-					:task="task"
-					:employees="employees"
-					:category="taskCategories.find((cat) => cat.id === task.category)"
-					@deleteTask="deleteTask"
-				></ManagerTaskCardComponent>
-			</v-col>
+			<transition-group name="list">
+				<v-col
+					sm="4"
+					v-for="task in sortedTasks"
+					:key="task.id"
+				>
+					<ManagerTaskCardComponent
+						:task="task"
+						:employees="employees"
+						:category="taskCategories.find((cat) => cat.id === task.category)"
+						@deleteTask="deleteTask"
+					></ManagerTaskCardComponent>
+				</v-col>
+			</transition-group>
 		</v-row>
 
 		<v-snackbar v-model="snackbar">
@@ -136,6 +145,9 @@ import useSortedTasks from "@/hooks/common/useSortedTasks";
 import getManagerTasks from "@/hooks/manager/getManagerTasks";
 import getManagerEmployees from "@/hooks/manager/getManagerEmployees";
 import getManagerTaskCategories from "@/hooks/manager/getManagerTaskCategories";
+import useStatusFilteredTasks from "@/hooks/common/useStatusFilteredTasks";
+import useCategoryFilteredTasks from "@/hooks/common/useCategoryFilteredTasks";
+import useSearchTasks from "@/hooks/common/useSearchTasks";
 
 export default {
 	data() {
@@ -149,21 +161,51 @@ export default {
 		};
 	},
 	setup(props) {
+		// Получение данных из API
 		const { employees } = getManagerEmployees();
-		const { tasks, isTasksLoading } = getManagerTasks();
 		const { taskCategories } = getManagerTaskCategories();
-		const { selectedSortOption, sortOptions, sortedTasks, toggleSortDirection, isSortAscending } = useSortedTasks(tasks);
+		const { tasks, isTasksLoading } = getManagerTasks();
+
+		// Фильтрация задач по статусу
+		const { statusFilterOptions, selectedFilterOption, statusFilteredTasks } = useStatusFilteredTasks(tasks);
+
+		// Фильтрация задач по категории
+		const { selectedFilterCategory, categoryFilteredTasks } = useCategoryFilteredTasks(statusFilteredTasks);
+
+		// Поиск задач
+		const { searchedTasks, searchQuery } = useSearchTasks(categoryFilteredTasks);
+
+		// Сортировка задач
+		const { selectedSortOption, sortOptions, sortedTasks, toggleSortDirection, isSortAscending } = useSortedTasks(searchedTasks);
 
 		return {
+			// Данные
 			tasks,
 			taskCategories,
+			employees,
+
+			// Состояние загрузки данных
 			isTasksLoading,
+
+			// Сортировка
 			selectedSortOption,
 			sortOptions,
 			sortedTasks,
 			toggleSortDirection,
 			isSortAscending,
-			employees,
+
+			// Фильтрация по статусу
+			statusFilterOptions,
+			selectedFilterOption,
+			statusFilteredTasks,
+
+			// Фильтрация по категории
+			selectedFilterCategory,
+			categoryFilteredTasks,
+
+			// Поиск
+			searchedTasks,
+			searchQuery,
 		};
 	},
 	components: {
@@ -218,5 +260,15 @@ export default {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
+}
+
+.list-enter-active,
+.list-leave-active {
+	transition: all 0.23s ease;
+}
+.list-enter-from,
+.list-leave-to {
+	opacity: 0;
+	transform: translateX(30px);
 }
 </style>

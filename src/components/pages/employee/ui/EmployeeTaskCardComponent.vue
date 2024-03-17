@@ -18,10 +18,7 @@
 						></div>
 					</div>
 					<v-card-subtitle>Категория: {{ task.category ? category?.name : "Без категории" }}</v-card-subtitle>
-					<v-card-subtitle
-						>Статус:
-						{{ task.is_completed !== undefined ? (task.is_completed ? "Выполнена" : "Не выполнена") : "Не установлен" }}</v-card-subtitle
-					>
+					<v-card-subtitle>Статус: {{ task.is_completed ? "Выполнена" : "Не выполнена" }}</v-card-subtitle>
 				</div>
 			</div>
 			<v-card-text class="bg-card_body text-truncate">

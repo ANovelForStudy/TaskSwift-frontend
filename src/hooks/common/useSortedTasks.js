@@ -1,4 +1,4 @@
-import { ref, onMounted, computed } from "vue";
+import { ref, computed } from "vue";
 
 export default function useSortedTasks(tasks) {
 	// Выбранная опция сортировки

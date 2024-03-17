@@ -19,7 +19,7 @@
 					</div>
 					<v-card-subtitle>Категория: {{ task.category ? category?.name : "Без категории" }}</v-card-subtitle>
 					<v-card-subtitle>Исполнитель: {{ getEmployeeNameById(task.assigned_to) }}</v-card-subtitle>
-					<v-card-subtitle>Статус: {{ task.is_completed || "Не установлен" }}</v-card-subtitle>
+					<v-card-subtitle>Статус: {{ task.is_completed ? "Завершена" : "Не завершена" }}</v-card-subtitle>
 				</div>
 			</div>
 			<v-card-text class="bg-card_body text-truncate">
