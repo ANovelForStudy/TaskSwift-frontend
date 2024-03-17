@@ -14,11 +14,12 @@ import EmployeeTaskManagementPage from "@/components/pages/employee/EmployeeTask
 import ManagerDashboardPage from "@/components/pages/manager/ManagerDashboardPage";
 import ManagerTaskManagementPage from "@/components/pages/manager/ManagerTaskManagementPage";
 import ManagerEmployeeManagementPage from "@/components/pages/manager/ManagerEmployeeManagementPage";
+import ManagerTaskCategoriesManagementPage from "@/components/pages/manager/ManagerTaskCategoriesManagementPage.vue";
 
 import AccountPage from "@/components/pages/AccountPage";
 import FeedbackPage from "@/components/pages/FeedbackPage";
 
-// Ошибки
+// Страницы-обработчики ошибок
 import Error404Page from "@/components/pages/base/errors/Error404Page";
 
 // Vuex
@@ -119,6 +120,23 @@ const routes = [
 		path: "/manager-tasks",
 		name: "ManagerTasks",
 		component: ManagerTaskManagementPage,
+		meta: { requiredRoles: [], requiresAuth: true },
+		beforeEnter(to, from, next) {
+			const userType = store.state?.user?.data?.user_type;
+
+			switch (userType) {
+				case Roles.Manager:
+					next();
+					break;
+				default:
+					next({ name: "Error404" });
+			}
+		},
+	},
+	{
+		path: "/manager-task-categories",
+		name: "TaskCategories",
+		component: ManagerTaskCategoriesManagementPage,
 		meta: { requiredRoles: [], requiresAuth: true },
 		beforeEnter(to, from, next) {
 			const userType = store.state?.user?.data?.user_type;

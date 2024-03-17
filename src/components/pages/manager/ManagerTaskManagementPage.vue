@@ -14,6 +14,13 @@
 			<v-list-item>
 				<CreateTaskCategoryDialog @createTaskCategory="createTaskCategory"></CreateTaskCategoryDialog>
 			</v-list-item>
+			<v-list-item
+				><ActionButton
+					:to="{ name: 'TaskCategories' }"
+					icon="category"
+					>Управление категориями задач</ActionButton
+				></v-list-item
+			>
 		</v-row>
 		<div class="py-5">
 			<v-row>
@@ -137,6 +144,8 @@
 <script>
 import axios from "axios";
 
+import ActionButton from "@/components/ui/ActionButton";
+
 import ManagerTaskCardComponent from "@/components/pages/manager/ui/ManagerTaskCardComponent";
 import CreateTaskDialog from "@/components/pages/manager/ui/CreateTaskDialog";
 import CreateTaskCategoryDialog from "@/components/pages/manager/ui/CreateTaskCategoryDialog";
@@ -209,6 +218,7 @@ export default {
 		ManagerTaskCardComponent,
 		CreateTaskDialog,
 		CreateTaskCategoryDialog,
+		ActionButton,
 	},
 	methods: {
 		async deleteTask(taskId) {

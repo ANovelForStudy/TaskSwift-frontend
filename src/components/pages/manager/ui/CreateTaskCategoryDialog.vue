@@ -1,7 +1,7 @@
 <template>
 	<v-dialog
 		max-width="600"
-		v-model="dialog"
+		v-model="isDialogOpen"
 		style="background: #000000aa"
 		transition="dialog-bottom-transition"
 	>
@@ -21,7 +21,7 @@
 				<v-card-text>
 					<v-form
 						ref="createCategoryForm"
-						@submit.prevent="submitCategory"
+						@submit.prevent="createTaskCategory"
 					>
 						<v-container>
 							<v-text-field
@@ -94,6 +94,7 @@
 									variant="tonal"
 									block
 									type="submit"
+									:loading="isRequestProcessing"
 									>Создать категорию</v-btn
 								>
 							</v-col>
@@ -106,45 +107,28 @@
 </template>
 
 <script>
-import axios from "axios";
-
 import ActionButton from "@/components/ui/ActionButton";
 
+import useCreateTaskCategory from "@/hooks/manager/useCreateTaskCategory";
+
 export default {
-	data: () => ({
-		category: {
-			name: "",
-			description: "",
-			color: "#FFFFFF",
-		},
-		dialog: false,
-	}),
+	data: () => ({}),
+	setup(props, context) {
+		const { category, createTaskCategory, isRequestProcessing, isDialogOpen } = useCreateTaskCategory(context.emit);
+
+		return {
+			category,
+			createTaskCategory,
+			isRequestProcessing,
+			isDialogOpen,
+		};
+	},
 	components: {
 		ActionButton,
 	},
 	methods: {
 		categoryNameLengthValidation(value) {
 			return this.category.name !== "" || "Название обязательно";
-		},
-		async submitCategory() {
-			this.loading = true;
-
-			if (this.category.name === "") {
-				return;
-			}
-
-			console.log("[INFO]: Создание категории");
-
-			await axios
-				.post("/api/v1/tasks/categories/", this.category)
-				.then((response) => {
-					this.$emit("createTaskCategory", response.data);
-
-					this.dialog = false;
-				})
-				.catch((error) => {
-					console.log(error);
-				});
 		},
 	},
 };

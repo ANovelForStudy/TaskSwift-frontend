@@ -131,14 +131,18 @@ export default {
 		userRoles: Roles,
 		items: {
 			items_general: [
-				{ icon: "home", title: "Главная", link: "/" },
+				{
+					icon: "home",
+					title: "Главная",
+					link: { name: "Home" },
+				},
 				{ icon: "message", title: "Обратная связь", link: "/feedback" },
 			],
 			items_management: [
 				{
 					icon: "task",
 					title: "Управление задачами",
-					link: "Tasks",
+					link: { name: "Tasks" },
 				},
 				{
 					icon: "description",
