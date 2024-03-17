@@ -128,7 +128,7 @@ export default {
 	},
 	computed: {
 		deadlineDate() {
-			return this.formatDate(this.task.deadline);
+			return this.task.deadline ? this.formatDate(this.task.deadline) : "Не установлен";
 		},
 	},
 	methods: {

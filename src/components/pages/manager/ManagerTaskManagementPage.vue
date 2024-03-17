@@ -141,13 +141,13 @@ import ManagerTaskCardComponent from "@/components/pages/manager/ui/ManagerTaskC
 import CreateTaskDialog from "@/components/pages/manager/ui/CreateTaskDialog";
 import CreateTaskCategoryDialog from "@/components/pages/manager/ui/CreateTaskCategoryDialog";
 
-import useSortedTasks from "@/hooks/common/useSortedTasks";
+import useSortedTasks from "@/hooks/common/tasks/useSortedTasks";
 import getManagerTasks from "@/hooks/manager/getManagerTasks";
 import getManagerEmployees from "@/hooks/manager/getManagerEmployees";
-import getTaskCategories from "@/hooks/common/getTaskCategories";
-import useStatusFilteredTasks from "@/hooks/common/useStatusFilteredTasks";
-import useCategoryFilteredTasks from "@/hooks/common/useCategoryFilteredTasks";
-import useSearchTasks from "@/hooks/common/useSearchTasks";
+import getTaskCategories from "@/hooks/common/tasks/getTaskCategories";
+import useStatusFilteredTasks from "@/hooks/common/tasks/useStatusFilteredTasks";
+import useCategoryFilteredTasks from "@/hooks/common/tasks/useCategoryFilteredTasks";
+import useSearchTasks from "@/hooks/common/tasks/useSearchTasks";
 
 export default {
 	data() {

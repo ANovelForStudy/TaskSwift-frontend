@@ -124,7 +124,7 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import Roles from "@/services/roles";
+import Roles from "@/helpers/roles";
 
 export default {
 	data: () => ({

@@ -3,7 +3,7 @@
 		max-width="850"
 		style="background: #000000aa"
 		transition="dialog-bottom-transition"
-		v-model="dialog"
+		v-model="isDialogOpen"
 	>
 		<template v-slot:activator="{ props: activatorProps }">
 			<ActionButton
@@ -21,7 +21,7 @@
 				<v-card-text>
 					<v-form
 						ref="createTaskForm"
-						@submit.prevent="submitTask"
+						@submit.prevent="createTask"
 					>
 						<v-container>
 							<v-text-field
@@ -132,7 +132,7 @@
 									variant="tonal"
 									block
 									type="submit"
-									:loading="loading"
+									:loading="isRequestProcessing"
 									>Создать задачу</v-btn
 								>
 							</v-col>
@@ -149,28 +149,28 @@ import axios from "axios";
 
 import ActionButton from "@/components/ui/ActionButton";
 
-import { getEmployees } from "@/services/api/apiUsersService";
+import getManagerEmployees from "@/hooks/manager/getManagerEmployees";
+import useCreateTask from "@/hooks/manager/useCreateTask";
 
 export default {
-	data: () => ({
-		task: {
-			title: "",
-			description: "",
-			category: null,
-			assigned_to: null,
-			priority: "U",
-			deadline: null,
-			color: "#FFFFFF",
-		},
-		employees: [],
-		loading: false,
-		dialog: false,
-	}),
+	data: () => ({}),
 	props: {
 		categories: {
 			type: Array,
 			required: true,
 		},
+	},
+	setup(props, context) {
+		const { employees } = getManagerEmployees();
+		const { task, createTask, isRequestProcessing, isDialogOpen } = useCreateTask(context.emit);
+
+		return {
+			employees,
+			task,
+			createTask,
+			isRequestProcessing,
+			isDialogOpen,
+		};
 	},
 	components: {
 		ActionButton,
@@ -182,13 +182,6 @@ export default {
 				value: employee.id,
 			}));
 		},
-	},
-	async created() {
-		try {
-			this.employees = await getEmployees();
-		} catch (error) {
-			console.error(error);
-		}
 	},
 	methods: {
 		taskDeadlineFormatValidation(value) {
@@ -202,48 +195,6 @@ export default {
 		},
 		taskTitleLengthValidation(value) {
 			return this.task.title !== "" || "Название обязательно";
-		},
-		async submitTask() {
-			if (this.task.title === "") {
-				return;
-			}
-
-			const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-			if ((!dateRegex.test(this.task.deadline) && !this.task.deadline === "") || !this.task.deadline === null) {
-				return;
-			}
-
-			if (this.task.deadline === "") {
-				this.task.deadline = null;
-			}
-
-			console.log("[INFO]: Создание задачи");
-
-			this.loading = true;
-
-			await axios
-				.post("/api/v1/tasks/", this.task)
-				.then((response) => {
-					this.$emit("createTask", response.data);
-
-					this.task = {
-						title: "",
-						description: "",
-						category: null,
-						assigned_to: null,
-						priority: "U",
-						deadline: null,
-						color: "#FFFFFF",
-					};
-
-					this.dialog = false;
-				})
-				.finally(() => {
-					this.loading = false;
-				})
-				.catch((error) => {
-					console.log(error);
-				});
 		},
 	},
 };

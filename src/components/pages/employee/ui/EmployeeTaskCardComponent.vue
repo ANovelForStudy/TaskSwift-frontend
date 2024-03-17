@@ -8,7 +8,13 @@
 				<div class="task-card__edge bg-secondary"></div>
 				<div class="py-2 bg-card_header">
 					<div class="task-card__title-wrapper">
-						<v-card-title primary-title>{{ task.title }}</v-card-title>
+						<v-card-title primary-title
+							><div
+								class="text-truncate"
+								style="display: inline-block"
+								>{{ task.title }}</div
+							></v-card-title
+						>
 
 						<div
 							class="task-card__circle-indicator rounded-circle mx-3"
@@ -18,7 +24,9 @@
 						></div>
 					</div>
 					<v-card-subtitle>Категория: {{ task.category ? category?.name : "Без категории" }}</v-card-subtitle>
-					<v-card-subtitle>Статус: {{ task.is_completed ? "Выполнена" : "Не выполнена" }}</v-card-subtitle>
+					<v-card-subtitle :class="task.is_completed ? 'text-success' : 'text-amber'"
+						>Статус: {{ task.is_completed ? "Выполнена" : "Не выполнена" }}</v-card-subtitle
+					>
 				</div>
 			</div>
 			<v-card-text class="bg-card_body text-truncate">

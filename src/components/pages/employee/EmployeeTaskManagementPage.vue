@@ -133,12 +133,12 @@ import axios from "axios";
 import EmployeeTaskCardComponent from "./ui/EmployeeTaskCardComponent";
 import ActionButton from "@/components/ui/ActionButton";
 
-import useSortedTasks from "@/hooks/common/useSortedTasks";
+import useSortedTasks from "@/hooks/common/tasks/useSortedTasks";
 import getEmployeeTasks from "@/hooks/employee/getEmployeeTasks";
-import getTaskCategories from "@/hooks/common/getTaskCategories";
-import useStatusFilteredTasks from "@/hooks/common/useStatusFilteredTasks";
-import useCategoryFilteredTasks from "@/hooks/common/useCategoryFilteredTasks";
-import useSearchTasks from "@/hooks/common/useSearchTasks";
+import getTaskCategories from "@/hooks/common/tasks/getTaskCategories";
+import useStatusFilteredTasks from "@/hooks/common/tasks/useStatusFilteredTasks";
+import useCategoryFilteredTasks from "@/hooks/common/tasks/useCategoryFilteredTasks";
+import useSearchTasks from "@/hooks/common/tasks/useSearchTasks";
 
 export default {
 	data() {

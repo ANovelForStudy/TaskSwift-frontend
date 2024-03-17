@@ -74,7 +74,7 @@
 							</v-row>
 
 							<v-text-field
-								v-model="task.deadline"
+								v-model="deadlineDate"
 								readonly
 								label="Дедлайн"
 								:rules="[taskDeadlineFormatValidation]"
@@ -132,7 +132,7 @@
 </template>
 
 <script>
-import { getEmployees } from "@/services/api/apiUsersService";
+import moment from "moment";
 
 export default {
 	data: () => ({}),
@@ -153,7 +153,14 @@ export default {
 				value: employee.id,
 			}));
 		},
+		deadlineDate() {
+			return this.task.deadline ? this.formatDate(this.task.deadline) : "Не установлен";
+		},
 	},
-	methods: {},
+	methods: {
+		formatDate(date) {
+			return moment(date).format("LLL");
+		},
+	},
 };
 </script>

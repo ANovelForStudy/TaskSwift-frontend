@@ -18,11 +18,7 @@ export default function getManagerTasks() {
 	};
 
 	onMounted(() => {
-		try {
-			fetchingTasks();
-		} catch (error) {
-			console.log(error);
-		}
+		fetchingTasks();
 	});
 
 	return {

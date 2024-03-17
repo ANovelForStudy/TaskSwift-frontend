@@ -25,7 +25,7 @@ import Error404Page from "@/components/pages/base/errors/Error404Page";
 import store from "@/store";
 
 // Enum роли пользователей
-import Roles from "@/services/roles.js";
+import Roles from "@/helpers/roles.js";
 
 const routes = [
 	{
