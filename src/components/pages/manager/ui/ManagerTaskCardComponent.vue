@@ -17,7 +17,7 @@
 							}"
 						></div>
 					</div>
-					<v-card-subtitle>Категория: {{ task.category ? task.category : "Без категории" }}</v-card-subtitle>
+					<v-card-subtitle>Категория: {{ task.category ? category?.name : "Без категории" }}</v-card-subtitle>
 					<v-card-subtitle>Исполнитель: {{ getEmployeeNameById(task.assigned_to) }}</v-card-subtitle>
 					<v-card-subtitle>Статус: {{ task.is_completed || "Не установлен" }}</v-card-subtitle>
 				</div>
@@ -89,6 +89,10 @@ export default {
 		employees: {
 			type: Array,
 			required: true,
+		},
+		category: {
+			type: Object,
+			required: false,
 		},
 	},
 	methods: {

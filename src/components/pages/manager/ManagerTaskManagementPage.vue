@@ -7,7 +7,7 @@
 		<v-row class="py-5">
 			<v-list-item
 				><CreateTaskDialog
-					:categories="categories"
+					:categories="taskCategories"
 					@createTask="createTask"
 				></CreateTaskDialog
 			></v-list-item>
@@ -16,11 +16,67 @@
 			</v-list-item>
 		</v-row>
 		<div class="py-5">
-			<span class="text-h5">Список задач</span>
+			<v-row>
+				<v-col>
+					<span class="text-h5">Список задач</span><br />
+					<span>{{ tasks.length ? `Всего задач: ${tasks.length}` : `` }}</span>
+				</v-col>
+			</v-row>
+			<v-row>
+				<v-col lg="3">
+					<v-select
+						v-model="selectedSortOption"
+						:items="sortOptions"
+						label="Сортировка"
+						item-title="label"
+						item-value="value"
+						prepend-inner-icon="sort_by_alpha"
+						variant="outlined"
+						color="accent"
+					></v-select>
+					<v-btn
+						class="rounded-xl"
+						variant="tonal"
+						color="accent"
+						@click="toggleSortDirection"
+					>
+						{{ isSortAscending ? "По возрастанию" : "По убыванию" }}
+						<template v-slot:prepend>
+							<v-icon>{{ isSortAscending ? "expand_less" : "expand_more" }}</v-icon>
+						</template>
+					</v-btn>
+				</v-col>
+				<v-col lg="3"
+					><v-select
+						v-model="filterBy"
+						:items="filterOptions"
+						label="Фильтрация по статусу"
+						item-title="label"
+						item-value="value"
+						prepend-inner-icon="filter_alt"
+						variant="outlined"
+						color="accent"
+						@update:model-value="filterTasks"
+					></v-select
+				></v-col>
+				<v-col lg="3"
+					><v-select
+						v-model="filterCategory"
+						:items="[{ name: 'Все категории', id: null }, ...taskCategories]"
+						item-title="name"
+						item-value="id"
+						label="Фильтрация по категории"
+						prepend-inner-icon="bookmarks"
+						variant="outlined"
+						color="accent"
+						@update:model-value="filterTasks"
+					></v-select
+				></v-col>
+			</v-row>
 		</div>
 		<div
 			class="loader-progress-circular"
-			v-if="progressCircular"
+			v-if="isTasksLoading"
 		>
 			<div class="rounded-circle bg-sidebar pa-3">
 				<v-progress-circular
@@ -33,7 +89,7 @@
 			</div>
 		</div>
 		<div
-			v-if="!tasks.length && !progressCircular"
+			v-if="!tasks.length && !isTasksLoading"
 			class="text-center py-10"
 		>
 			<h3>Задачи ещё не были созданы</h3>
@@ -41,12 +97,13 @@
 		<v-row>
 			<v-col
 				sm="4"
-				v-for="task in tasks"
+				v-for="task in sortedTasks"
 				:key="task.id"
 			>
 				<ManagerTaskCardComponent
 					:task="task"
 					:employees="employees"
+					:category="taskCategories.find((cat) => cat.id === task.category)"
 					@deleteTask="deleteTask"
 				></ManagerTaskCardComponent>
 			</v-col>
@@ -70,29 +127,43 @@
 
 <script>
 import axios from "axios";
+
 import ManagerTaskCardComponent from "@/components/pages/manager/ui/ManagerTaskCardComponent";
 import CreateTaskDialog from "@/components/pages/manager/ui/CreateTaskDialog";
 import CreateTaskCategoryDialog from "@/components/pages/manager/ui/CreateTaskCategoryDialog";
 
-import { getAllTasks, getTaskCategories, getEmployees } from "@/services/api/apiUsersService";
+import useSortedTasks from "@/hooks/common/useSortedTasks";
+import getManagerTasks from "@/hooks/manager/getManagerTasks";
+import getManagerEmployees from "@/hooks/manager/getManagerEmployees";
+import getManagerTaskCategories from "@/hooks/manager/getManagerTaskCategories";
 
 export default {
 	data() {
 		return {
-			// Список сотрудников
-			employees: [],
-			// Список категорий
-			categories: [],
-			// Список задач
-			tasks: [],
-			// selectedCategory: "",
 			// searchQuery: "",
 			// plug: "-",
+
 			// Уведомление снизу об успешном создании задачи
 			snackbar: false,
 			snackbar_text: "",
-			// Прогрессбар во время загрузки списка задач
-			progressCircular: true,
+		};
+	},
+	setup(props) {
+		const { employees } = getManagerEmployees();
+		const { tasks, isTasksLoading } = getManagerTasks();
+		const { taskCategories } = getManagerTaskCategories();
+		const { selectedSortOption, sortOptions, sortedTasks, toggleSortDirection, isSortAscending } = useSortedTasks(tasks);
+
+		return {
+			tasks,
+			taskCategories,
+			isTasksLoading,
+			selectedSortOption,
+			sortOptions,
+			sortedTasks,
+			toggleSortDirection,
+			isSortAscending,
+			employees,
 		};
 	},
 	components: {
@@ -118,7 +189,7 @@ export default {
 			this.snackbar = true;
 		},
 		async createTaskCategory(category) {
-			this.categories.push(category);
+			this.taskCategories.push(category);
 
 			this.snackbar_text = "Категория задач успешно создана!";
 			this.snackbar = true;
@@ -136,21 +207,6 @@ export default {
 					this.loading = false;
 				});
 		},
-	},
-	async created() {
-		try {
-			this.categories = await getTaskCategories();
-
-			this.progressCircular = true;
-
-			this.tasks = await getAllTasks();
-		} catch (error) {
-			console.log(error);
-		} finally {
-			this.progressCircular = false;
-		}
-
-		this.employees = await getEmployees();
 	},
 };
 </script>
