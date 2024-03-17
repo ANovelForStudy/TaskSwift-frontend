@@ -3,6 +3,7 @@ import axios from "axios";
 
 export default function getManagerTaskCategories() {
 	const taskCategories = ref([]);
+	const isTaskCategoriesLoading = ref(true);
 
 	// Функция получения категорий задач
 	const fetchingTaskCategories = async () => {
@@ -11,18 +12,17 @@ export default function getManagerTaskCategories() {
 			taskCategories.value = response.data;
 		} catch {
 			console.log(error);
+		} finally {
+			isTaskCategoriesLoading.value = false;
 		}
 	};
 
 	onMounted(() => {
-		try {
-			fetchingTaskCategories();
-		} catch (error) {
-			console.log(error);
-		}
+		fetchingTaskCategories();
 	});
 
 	return {
 		taskCategories,
+		isTaskCategoriesLoading,
 	};
 }

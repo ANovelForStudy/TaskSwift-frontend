@@ -12,12 +12,12 @@
 		<div class="py-5">
 			<v-row>
 				<v-col>
-					<span class="text-h5">Список задач</span><br />
-					<span>{{ categories.length ? `Всего категорий: ${categories.length}` : `` }}</span>
+					<span class="text-h5">Список категорий</span><br />
+					<span>{{ taskCategories.length ? `Всего категорий: ${taskCategories.length}` : `` }}</span>
 				</v-col>
 			</v-row>
-			<!-- <v-row>
-				<v-col lg="3">
+			<v-row>
+				<v-col lg="4">
 					<v-select
 						v-model="selectedSortOption"
 						:items="sortOptions"
@@ -40,30 +40,7 @@
 						</template>
 					</v-btn>
 				</v-col>
-				<v-col lg="3"
-					><v-select
-						v-model="selectedFilterOption"
-						:items="statusFilterOptions"
-						label="Фильтрация по статусу"
-						item-title="label"
-						item-value="value"
-						prepend-inner-icon="filter_alt"
-						variant="outlined"
-						color="accent"
-					></v-select
-				></v-col>
-				<v-col lg="3"
-					><v-select
-						v-model="selectedFilterCategory"
-						:items="[{ name: 'Все категории', id: 'all' }, { name: 'Без категории', id: null }, ...taskCategories]"
-						item-title="name"
-						item-value="id"
-						label="Фильтрация по категории"
-						prepend-inner-icon="bookmarks"
-						variant="outlined"
-						color="accent"
-					></v-select></v-col
-				><v-col lg="3">
+				<v-col lg="4">
 					<v-text-field
 						v-model="searchQuery"
 						label="Поиск"
@@ -73,10 +50,10 @@
 						color="accent"
 					></v-text-field
 				></v-col>
-			</v-row> -->
+			</v-row>
 		</div>
 
-		<!-- <div
+		<div
 			class="loader-progress-circular"
 			v-if="isTaskCategoriesLoading"
 		>
@@ -89,28 +66,26 @@
 					indeterminate
 				></v-progress-circular>
 			</div>
-		</div> -->
+		</div>
 
-		<!-- <div
-			v-if="!categories.length && !isTaskCategoriesLoading"
+		<div
+			v-if="!taskCategories.length && !isTaskCategoriesLoading"
 			class="text-center py-10"
 		>
 			<h3>Категории задач ещё не были созданы</h3>
-		</div> -->
+		</div>
 
 		<v-row>
 			<transition-group name="list">
 				<v-col
 					sm="4"
-					v-for="task in sortedTasks"
-					:key="task.id"
+					v-for="category in sortedTaskCategories"
+					:key="category.id"
 				>
-					<ManagerTaskCardComponent
-						:task="task"
-						:employees="employees"
-						:category="taskCategories.find((cat) => cat.id === task.category)"
-						@deleteTask="deleteTask"
-					></ManagerTaskCardComponent>
+					<ManagerTaskCategoryCardComponent
+						:category="category"
+						@deleteCategory="deleteCategory"
+					></ManagerTaskCategoryCardComponent>
 				</v-col>
 			</transition-group>
 		</v-row>
@@ -130,3 +105,107 @@
 		</v-snackbar>
 	</v-container>
 </template>
+
+<script>
+// Испорт сторонних библиотек
+import axios from "axios";
+
+// Получение данных
+import getTaskCategories from "@/hooks/common/tasks/getTaskCategories";
+
+// Сортировка
+import useSortedTaskCategories from "@/hooks/common/task_categories/useSortedTaskCategories";
+
+// Поиск задач
+import useSearch from "@/hooks/common/useSearch";
+import useTaskCategoriesSearch from "@/hooks/common/task_categories/useTaskCategoriesSearch";
+
+// Компоненты
+import CreateTaskCategoryDialog from "@/components/pages/manager/ui/CreateTaskCategoryDialog";
+import ManagerTaskCategoryCardComponent from "./ui/ManagerTaskCategoryCardComponent.vue";
+
+export default {
+	data() {
+		return {
+			// Уведомление снизу об успешном создании задачи
+			snackbar: false,
+			snackbar_text: "",
+		};
+	},
+	setup() {
+		// Получение данных
+		const { taskCategories, isTaskCategoriesLoading } = getTaskCategories();
+
+		// Поиск задач
+		const { searchedTaskCategories, searchQuery } = useTaskCategoriesSearch(taskCategories);
+
+		// Сортировка задач
+		const { selectedSortOption, sortOptions, sortedTaskCategories, toggleSortDirection, isSortAscending } =
+			useSortedTaskCategories(searchedTaskCategories);
+
+		return {
+			// Данные
+			taskCategories,
+
+			// Состояние загрузки данных
+			isTaskCategoriesLoading,
+
+			// Сортировка
+			selectedSortOption,
+			sortOptions,
+			sortedTaskCategories,
+			toggleSortDirection,
+			isSortAscending,
+
+			// Поиск
+			searchQuery,
+			searchedTaskCategories,
+		};
+	},
+	components: {
+		CreateTaskCategoryDialog,
+		ManagerTaskCategoryCardComponent,
+	},
+	methods: {
+		async deleteCategory(categoryId) {
+			await axios
+				.delete(`api/v1/tasks/categories/${categoryId}/`)
+				.then((response) => {
+					this.taskCategories = this.taskCategories.filter((category) => category.id !== categoryId);
+
+					this.snackbar_text = "Категория успешно удалена!";
+					this.snackbar = true;
+				})
+				.catch((error) => {
+					console.error(error);
+				});
+		},
+		createTaskCategory(category) {
+			this.taskCategories.push(category);
+
+			this.snackbar_text = "Категория успешно создана!";
+			this.snackbar = true;
+		},
+	},
+};
+</script>
+
+<style scoped>
+.loader-progress-circular {
+	min-height: 60vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.list-enter-active,
+.list-leave-active {
+	transition: all 0.23s ease;
+}
+.list-enter-from,
+.list-leave-to {
+	opacity: 0;
+	transform: translateX(30px);
+}
+</style>

@@ -138,7 +138,7 @@ import getEmployeeTasks from "@/hooks/employee/getEmployeeTasks";
 import getTaskCategories from "@/hooks/common/tasks/getTaskCategories";
 import useStatusFilteredTasks from "@/hooks/common/tasks/useStatusFilteredTasks";
 import useCategoryFilteredTasks from "@/hooks/common/tasks/useCategoryFilteredTasks";
-import useSearchTasks from "@/hooks/common/tasks/useSearchTasks";
+import useSearch from "@/hooks/common/useSearch";
 
 export default {
 	data() {
@@ -160,10 +160,10 @@ export default {
 		const { selectedFilterCategory, categoryFilteredTasks } = useCategoryFilteredTasks(statusFilteredTasks);
 
 		// Поиск задач
-		const { searchedTasks, searchQuery } = useSearchTasks(categoryFilteredTasks);
+		const { searchedItems, searchQuery } = useSearch(categoryFilteredTasks);
 
 		// Сортировка задач
-		const { selectedSortOption, sortOptions, sortedTasks, toggleSortDirection, isSortAscending } = useSortedTasks(searchedTasks);
+		const { selectedSortOption, sortOptions, sortedTasks, toggleSortDirection, isSortAscending } = useSortedTasks(searchedItems);
 
 		return {
 			// Данные
@@ -190,7 +190,7 @@ export default {
 			categoryFilteredTasks,
 
 			// Поиск
-			searchedTasks,
+			searchedItems,
 			searchQuery,
 		};
 	},
@@ -199,24 +199,6 @@ export default {
 		ActionButton,
 	},
 	methods: {},
-	// async created() {
-	// 	await axios
-	// 		.get("/api/v1/tasks/assigned-to-me/")
-	// 		.then((response) => {
-	// 			this.tasks = response.data;
-	// 		})
-	// 		.catch((error) => {
-	// 			console.log(error);
-	// 		})
-	// 		.finally(() => {
-	// 			this.progressCircular = false;
-	// 		});
-
-	// 	// Делаю исходную неизменённую копию массива задач
-	// 	this.originTasks = [...this.tasks];
-
-	// 	this.sortTasks();
-	// },
 };
 </script>
 

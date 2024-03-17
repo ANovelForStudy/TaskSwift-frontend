@@ -144,19 +144,30 @@
 <script>
 import axios from "axios";
 
-import ActionButton from "@/components/ui/ActionButton";
+// Получение данных
+import getManagerTasks from "@/hooks/manager/getManagerTasks";
+import getTaskCategories from "@/hooks/common/tasks/getTaskCategories";
+import getManagerEmployees from "@/hooks/manager/getManagerEmployees";
 
+// Сортировка
+import useSortedTasks from "@/hooks/common/tasks/useSortedTasks";
+
+// Фильтрация задач по статусу
+import useStatusFilteredTasks from "@/hooks/common/tasks/useStatusFilteredTasks";
+
+// Фильтрация по категории
+import useCategoryFilteredTasks from "@/hooks/common/tasks/useCategoryFilteredTasks";
+
+// Поиск задач
+import useSearch from "@/hooks/common/useSearch";
+
+// Компоненты
 import ManagerTaskCardComponent from "@/components/pages/manager/ui/ManagerTaskCardComponent";
 import CreateTaskDialog from "@/components/pages/manager/ui/CreateTaskDialog";
 import CreateTaskCategoryDialog from "@/components/pages/manager/ui/CreateTaskCategoryDialog";
 
-import useSortedTasks from "@/hooks/common/tasks/useSortedTasks";
-import getManagerTasks from "@/hooks/manager/getManagerTasks";
-import getManagerEmployees from "@/hooks/manager/getManagerEmployees";
-import getTaskCategories from "@/hooks/common/tasks/getTaskCategories";
-import useStatusFilteredTasks from "@/hooks/common/tasks/useStatusFilteredTasks";
-import useCategoryFilteredTasks from "@/hooks/common/tasks/useCategoryFilteredTasks";
-import useSearchTasks from "@/hooks/common/tasks/useSearchTasks";
+// UI
+import ActionButton from "@/components/ui/ActionButton";
 
 export default {
 	data() {
@@ -179,10 +190,10 @@ export default {
 		const { selectedFilterCategory, categoryFilteredTasks } = useCategoryFilteredTasks(statusFilteredTasks);
 
 		// Поиск задач
-		const { searchedTasks, searchQuery } = useSearchTasks(categoryFilteredTasks);
+		const { searchedItems, searchQuery } = useSearch(categoryFilteredTasks);
 
 		// Сортировка задач
-		const { selectedSortOption, sortOptions, sortedTasks, toggleSortDirection, isSortAscending } = useSortedTasks(searchedTasks);
+		const { selectedSortOption, sortOptions, sortedTasks, toggleSortDirection, isSortAscending } = useSortedTasks(searchedItems);
 
 		return {
 			// Данные
@@ -210,7 +221,7 @@ export default {
 			categoryFilteredTasks,
 
 			// Поиск
-			searchedTasks,
+			searchedItems,
 			searchQuery,
 		};
 	},
@@ -226,6 +237,9 @@ export default {
 				.delete(`api/v1/tasks/${taskId}/`)
 				.then((response) => {
 					this.tasks = this.tasks.filter((task) => task.id !== taskId);
+
+					this.snackbar_text = "Задача успешно удалена!";
+					this.snackbar = true;
 				})
 				.catch((error) => {
 					console.error(error);
@@ -242,19 +256,6 @@ export default {
 
 			this.snackbar_text = "Категория задач успешно создана!";
 			this.snackbar = true;
-		},
-		async getEmployees() {
-			await axios
-				.get("/api/v1/users/employees/")
-				.then((response) => {
-					this.employees = response.data;
-				})
-				.catch((error) => {
-					console.log(error);
-				})
-				.finally(() => {
-					this.loading = false;
-				});
 		},
 	},
 };
