@@ -160,6 +160,11 @@ export default {
 	components: {
 		DashboardCard,
 	},
+	computed: {
+		// totalAssignedTasks() {
+		// 	return this.tasks.filter((task) => task.assigned_to).length;
+		// },
+	},
 };
 </script>
 

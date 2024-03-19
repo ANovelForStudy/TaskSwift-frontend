@@ -5,7 +5,7 @@ export default function getManagerTasks() {
 	const tasks = ref([]);
 	const isTasksLoading = ref(true);
 
-	// Функция получения задач менеджера
+	// Функция получения задач работника
 	const fetchingTasks = async () => {
 		try {
 			const response = await axios.get("/api/v1/tasks/assigned-to-me/");
@@ -18,11 +18,7 @@ export default function getManagerTasks() {
 	};
 
 	onMounted(() => {
-		try {
-			fetchingTasks();
-		} catch (error) {
-			console.log(error);
-		}
+		fetchingTasks();
 	});
 
 	return {

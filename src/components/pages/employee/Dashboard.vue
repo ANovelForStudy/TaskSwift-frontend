@@ -20,12 +20,94 @@
 					<v-expansion-panel-text class="py-3 bg-primary_color">
 						<v-row>
 							<v-col
-								v-for="card in tasks_info"
-								:key="card.title"
 								cols="12"
 								sm="3"
 							>
-								<DashboardCard :card="card"></DashboardCard>
+								<DashboardCardNew
+									title="Всего задач"
+									icon="task"
+									color="red-darken-3"
+									second_color="red-darken-4"
+									>{{ totalTasks }}</DashboardCardNew
+								>
+							</v-col>
+
+							<v-col
+								cols="12"
+								sm="3"
+							>
+								<DashboardCardNew
+									title="Выполнено"
+									icon="check"
+									color="teal-darken-3"
+									second_color="teal-darken-4"
+									>{{ totalCompletedTasks }}</DashboardCardNew
+								>
+							</v-col>
+
+							<v-col
+								cols="12"
+								sm="3"
+							>
+								<DashboardCardNew
+									title="Не выполнено"
+									icon="close"
+									color="brown-darken-3"
+									second_color="brown-darken-4"
+									>{{ totalUncompletedTasks }}</DashboardCardNew
+								>
+							</v-col>
+
+							<v-col
+								cols="12"
+								sm="3"
+							>
+								<DashboardCardNew
+									title="Просрочено"
+									icon="cancel"
+									color="deep-orange-darken-3"
+									second_color="deep-orange-darken-4"
+									>{{ totalOverdueTasks }}</DashboardCardNew
+								>
+							</v-col>
+
+							<v-col
+								cols="12"
+								sm="4"
+							>
+								<DashboardCardNew
+									title="Дедлайн сегодня"
+									icon="today"
+									color="yellow-darken-3"
+									second_color="yellow-darken-4"
+									>{{ totalTodayTasks }}</DashboardCardNew
+								>
+							</v-col>
+
+							<v-col
+								cols="12"
+								sm="4"
+							>
+								<DashboardCardNew
+									title="Дедлайн завтра"
+									icon="calendar_month"
+									color="deep-orange-darken-3"
+									second_color="deep-orange-darken-4"
+									>{{ totalTomorrowTasks }}</DashboardCardNew
+								>
+							</v-col>
+
+							<v-col
+								cols="12"
+								sm="4"
+							>
+								<DashboardCardNew
+									title="Без дедлайна"
+									icon="event_busy"
+									color="grey-darken-2"
+									second_color="grey-darken-3"
+									>{{ totalNoDueDateTasks }}</DashboardCardNew
+								>
 							</v-col>
 						</v-row>
 					</v-expansion-panel-text>
@@ -42,7 +124,13 @@
 								cols="12"
 								sm="6"
 							>
-								<DashboardCard :card="card"></DashboardCard>
+								<DashboardCardNew
+									:title="card.title"
+									:icon="card.icon"
+									:color="card.color"
+									:second_color="card.second_color"
+									>0</DashboardCardNew
+								>
 							</v-col>
 						</v-row>
 					</v-expansion-panel-text>
@@ -53,62 +141,93 @@
 </template>
 
 <script>
-import DashboardCard from "@/components/ui/dashboard/DashboardCard";
+// Сторонние библиотеки
+import axios from "axios";
+import moment from "moment";
+
+// Компоненты
+import DashboardCardNew from "@/components/ui/dashboard/DashboardCardNew";
 
 export default {
 	data: () => ({
 		panel: [0, 1, 2],
 
-		tasks_info: [
-			{
-				title: "Назначено",
-				count: "54",
-				icon: "link",
-				color: "orange-darken-3",
-				second_color: "orange-darken-4",
-			},
-			{
-				title: "На проверке",
-				count: "3",
-				icon: "link_off",
-				color: "brown-darken-3",
-				second_color: "brown-darken-4",
-			},
-			{
-				title: "Выполнение подтверждено",
-				count: "15",
-				icon: "check",
-				color: "teal-darken-3",
-				second_color: "teal-darken-4",
-			},
-			{
-				title: "Просрочено",
-				count: "4",
-				icon: "cancel",
-				color: "deep-orange-darken-3",
-				second_color: "deep-orange-darken-4",
-			},
-		],
-
 		notes_info: [
 			{
 				title: "Заметок",
-				count: "54",
 				icon: "description",
 				color: "blue-darken-2",
 				second_color: "blue-darken-3",
 			},
 			{
-				title: "",
-				count: "3",
+				title: "Дополнительная информация",
 				icon: "link_off",
 				color: "blue-darken-3",
 				second_color: "blue-darken-4",
 			},
 		],
+
+		tasks: [],
+		isTasksLoading: true,
 	}),
 	components: {
-		DashboardCard,
+		DashboardCardNew,
+	},
+	methods: {
+		// Функция получения задач работника
+		async fetchingTasks() {
+			try {
+				const response = await axios.get("/api/v1/tasks/assigned-to-me/");
+				this.tasks = response.data;
+			} catch (error) {
+				console.log(error);
+			} finally {
+				this.isTasksLoading = false;
+			}
+		},
+	},
+	mounted() {
+		this.fetchingTasks();
+	},
+	computed: {
+		totalTasks() {
+			return this.tasks.length;
+		},
+		totalOverdueTasks() {
+			return this.tasks.filter((task) => {
+				const taskDeadline = moment(task.deadline);
+				const today = moment().startOf("day");
+
+				return taskDeadline.isBefore(today) && !task.is_completed;
+			}).length;
+		},
+		totalCompletedTasks() {
+			return this.tasks.filter((task) => task.is_completed).length;
+		},
+		totalUncompletedTasks() {
+			return this.tasks.filter((task) => !task.is_completed).length;
+		},
+		totalTodayTasks() {
+			return this.tasks.filter((task) => {
+				const taskDeadline = moment(task.deadline);
+				const today = moment().startOf("day");
+
+				return taskDeadline.isSame(today, "day");
+			}).length;
+		},
+		totalTomorrowTasks() {
+			return this.tasks.filter((task) => {
+				const taskDeadline = moment(task.deadline);
+				const tomorrow = moment().add(1, "days").startOf("day");
+
+				return taskDeadline.isSame(tomorrow, "day");
+			}).length;
+		},
+		totalNoDueDateTasks() {
+			return this.tasks.filter((task) => {
+				return !task.deadline;
+			}).length;
+		},
 	},
 };
 </script>

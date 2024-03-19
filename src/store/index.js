@@ -1,6 +1,10 @@
 import { createStore } from "vuex";
-import { sidebarDrawerModule } from "@/store/modules/sidebarToggleModule";
+
+// Сторонние библиотеки
 import axios from "axios";
+
+// Модули
+import { sidebarDrawerModule } from "@/store/modules/sidebarToggleModule";
 
 export default createStore({
 	state: {

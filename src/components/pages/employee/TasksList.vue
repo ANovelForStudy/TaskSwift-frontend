@@ -13,7 +13,10 @@
 			<v-row>
 				<v-col>
 					<span class="text-h5">Список задач</span><br />
-					<span>{{ tasks.length ? `Всего задач: ${tasks.length}` : `` }}</span>
+					<span
+						>{{ tasks.length ? `Всего задач: ${tasks.length}` : `` }}
+						{{ tasks.length !== sortedTasks.length ? `| Задачи согласно фильтрам: ${sortedTasks.length}` : `` }}</span
+					>
 				</v-col>
 			</v-row>
 			<v-row>
