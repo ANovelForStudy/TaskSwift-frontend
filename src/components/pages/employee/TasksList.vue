@@ -105,10 +105,10 @@
 					v-for="task in sortedTasks"
 					:key="task.id"
 				>
-					<EmployeeTaskCardComponent
+					<TaskCard
 						:task="task"
 						:category="taskCategories.find((cat) => cat.id === task.category)"
-					></EmployeeTaskCardComponent> </v-col
+					></TaskCard> </v-col
 			></transition-group>
 		</v-row>
 
@@ -130,15 +130,16 @@
 <script>
 import axios from "axios";
 
-import EmployeeTaskCardComponent from "./ui/EmployeeTaskCardComponent";
-import ActionButton from "@/components/ui/ActionButton";
-
 import useSortedTasks from "@/hooks/common/tasks/useSortedTasks";
 import getEmployeeTasks from "@/hooks/employee/getEmployeeTasks";
 import getTaskCategories from "@/hooks/common/tasks/getTaskCategories";
 import useStatusFilteredTasks from "@/hooks/common/tasks/useStatusFilteredTasks";
 import useCategoryFilteredTasks from "@/hooks/common/tasks/useCategoryFilteredTasks";
 import useSearch from "@/hooks/common/useSearch";
+
+// Компоненты
+import TaskCard from "./ui/TaskCard";
+import ActionButton from "@/components/ui/ActionButton";
 
 export default {
 	data() {
@@ -195,7 +196,7 @@ export default {
 		};
 	},
 	components: {
-		EmployeeTaskCardComponent,
+		TaskCard,
 		ActionButton,
 	},
 	methods: {},

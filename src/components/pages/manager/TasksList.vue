@@ -115,12 +115,12 @@
 					v-for="task in sortedTasks"
 					:key="task.id"
 				>
-					<ManagerTaskCardComponent
+					<TaskCard
 						:task="task"
 						:employees="employees"
 						:category="taskCategories.find((cat) => cat.id === task.category)"
 						@deleteTask="deleteTask"
-					></ManagerTaskCardComponent>
+					></TaskCard>
 				</v-col>
 			</transition-group>
 		</v-row>
@@ -162,7 +162,7 @@ import useCategoryFilteredTasks from "@/hooks/common/tasks/useCategoryFilteredTa
 import useSearch from "@/hooks/common/useSearch";
 
 // Компоненты
-import ManagerTaskCardComponent from "@/components/pages/manager/ui/ManagerTaskCardComponent";
+import TaskCard from "@/components/pages/manager/ui/TaskCard";
 import CreateTaskDialog from "@/components/pages/manager/ui/CreateTaskDialog";
 import CreateTaskCategoryDialog from "@/components/pages/manager/ui/CreateTaskCategoryDialog";
 
@@ -226,7 +226,7 @@ export default {
 		};
 	},
 	components: {
-		ManagerTaskCardComponent,
+		TaskCard,
 		CreateTaskDialog,
 		CreateTaskCategoryDialog,
 		ActionButton,

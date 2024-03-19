@@ -82,10 +82,10 @@
 					v-for="category in sortedTaskCategories"
 					:key="category.id"
 				>
-					<ManagerTaskCategoryCardComponent
+					<TaskCategoryCard
 						:category="category"
 						@deleteCategory="deleteCategory"
-					></ManagerTaskCategoryCardComponent>
+					></TaskCategoryCard>
 				</v-col>
 			</transition-group>
 		</v-row>
@@ -122,7 +122,7 @@ import useTaskCategoriesSearch from "@/hooks/common/task_categories/useTaskCateg
 
 // Компоненты
 import CreateTaskCategoryDialog from "@/components/pages/manager/ui/CreateTaskCategoryDialog";
-import ManagerTaskCategoryCardComponent from "./ui/ManagerTaskCategoryCardComponent.vue";
+import TaskCategoryCard from "./ui/TaskCategoryCard";
 
 export default {
 	data() {
@@ -164,7 +164,7 @@ export default {
 	},
 	components: {
 		CreateTaskCategoryDialog,
-		ManagerTaskCategoryCardComponent,
+		TaskCategoryCard,
 	},
 	methods: {
 		async deleteCategory(categoryId) {

@@ -42,10 +42,10 @@
 				</div>
 				<v-spacer></v-spacer>
 				<div class="px-3 ms-auto my-auto">
-					<EmployeeTaskDetailViewDialog
+					<TaskDetailsDialog
 						:task="task"
 						v-bind="props"
-					></EmployeeTaskDetailViewDialog>
+					></TaskDetailsDialog>
 					<v-tooltip
 						:text="!task.is_completed ? 'Отметить как выполненную' : 'Отправить на доработку'"
 						location="bottom"
@@ -71,13 +71,16 @@
 </template>
 
 <script>
+// Сторонние библиотеки
 import axios from "axios";
 import moment from "moment";
-import EmployeeTaskDetailViewDialog from "./EmployeeTaskDetailViewDialog";
+
+// Компоненты
+import TaskDetailsDialog from "./TaskDetailsDialog";
 
 export default {
 	components: {
-		EmployeeTaskDetailViewDialog,
+		TaskDetailsDialog,
 	},
 	props: {
 		task: {

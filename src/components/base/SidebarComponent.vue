@@ -75,7 +75,7 @@
 				</v-list-item>
 
 				<v-list-item
-					v-if="this.$store.state?.user?.data?.user_type !== this.userRoles.Employee"
+					v-if="this.$store.state.user && this.$store.state.user?.data?.user_type === this.userRoles.Manager"
 					prepend-icon="person"
 					color="accent"
 					to="Employees"
@@ -85,7 +85,7 @@
 				</v-list-item>
 
 				<v-list-item
-					v-if="this.$store.state?.user?.data?.user_type !== this.userRoles.Employee"
+					v-if="this.$store.state.user && this.$store.state?.user?.data?.user_type === this.userRoles.Manager"
 					prepend-icon="groups"
 					color="accent"
 					to="EmployeeGroups"

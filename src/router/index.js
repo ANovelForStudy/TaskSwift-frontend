@@ -4,20 +4,20 @@ import { createRouter, createWebHistory } from "vue-router";
 import LoginPage from "@/components/pages/auth/LoginPage";
 
 // Общие страницы
-import AboutPage from "@/components/pages/base/AboutPage";
+import AboutPage from "@/components/pages/base/About";
 
 // Страницы работника
-import EmployeeDashboardPage from "@/components/pages/employee/EmployeeDashboardPage";
-import EmployeeTaskManagementPage from "@/components/pages/employee/EmployeeTaskManagementPage";
+import EmployeeDashboardPage from "@/components/pages/employee/Dashboard";
+import EmployeeTaskManagementPage from "@/components/pages/employee/TasksList";
 
 // Страницы менеджера
-import ManagerDashboardPage from "@/components/pages/manager/ManagerDashboardPage";
-import ManagerTaskManagementPage from "@/components/pages/manager/ManagerTaskManagementPage";
-import ManagerEmployeeManagementPage from "@/components/pages/manager/ManagerEmployeeManagementPage";
-import ManagerTaskCategoriesManagementPage from "@/components/pages/manager/ManagerTaskCategoriesManagementPage.vue";
+import ManagerDashboardPage from "@/components/pages/manager/Dashboard";
+import ManagerTaskManagementPage from "@/components/pages/manager/TasksList";
+import ManagerEmployeeManagementPage from "@/components/pages/manager/EmployeesList";
+import ManagerTaskCategoriesManagementPage from "@/components/pages/manager/TaskCategoriesList.vue";
 
-import AccountPage from "@/components/pages/AccountPage";
-import FeedbackPage from "@/components/pages/FeedbackPage";
+import AccountPage from "@/components/pages/Account";
+import FeedbackPage from "@/components/pages/Feedback";
 
 // Страницы-обработчики ошибок
 import Error404Page from "@/components/pages/base/errors/Error404Page";
