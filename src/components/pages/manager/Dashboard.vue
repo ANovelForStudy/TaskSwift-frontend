@@ -12,13 +12,10 @@
 		<v-container class="pa-2">
 			<v-expansion-panels
 				multiple
-				v-model="panel">
+				v-model="panel"
+			>
 				<v-expansion-panel>
-					<v-expansion-panel-title
-						><span class="text-h5"
-							>Общая информация</span
-						></v-expansion-panel-title
-					>
+					<v-expansion-panel-title><span class="text-h5">Общая информация</span></v-expansion-panel-title>
 
 					<v-expansion-panel-text class="py-3">
 						<v-row>
@@ -26,9 +23,9 @@
 								v-for="card in general_info"
 								:key="card.title"
 								cols="12"
-								sm="3">
-								<DashboardCardComponent
-									:card="card"></DashboardCardComponent>
+								sm="3"
+							>
+								<DashboardCard :card="card"></DashboardCard>
 							</v-col>
 						</v-row>
 					</v-expansion-panel-text>
@@ -37,11 +34,7 @@
 				<br />
 
 				<v-expansion-panel>
-					<v-expansion-panel-title
-						><span class="text-h5"
-							>Задачи</span
-						></v-expansion-panel-title
-					>
+					<v-expansion-panel-title><span class="text-h5">Задачи</span></v-expansion-panel-title>
 
 					<v-expansion-panel-text class="py-3 bg-primary_color">
 						<v-row>
@@ -49,20 +42,16 @@
 								v-for="card in tasks_info"
 								:key="card.title"
 								cols="12"
-								sm="3">
-								<DashboardCardComponent
-									:card="card"></DashboardCardComponent>
+								sm="3"
+							>
+								<DashboardCard :card="card"></DashboardCard>
 							</v-col>
 						</v-row>
 					</v-expansion-panel-text>
 				</v-expansion-panel>
 
 				<v-expansion-panel>
-					<v-expansion-panel-title
-						><span class="text-h5"
-							>Заметки</span
-						></v-expansion-panel-title
-					>
+					<v-expansion-panel-title><span class="text-h5">Заметки</span></v-expansion-panel-title>
 
 					<v-expansion-panel-text class="py-3 bg-primary_color">
 						<v-row>
@@ -70,9 +59,9 @@
 								v-for="card in notes_info"
 								:key="card.title"
 								cols="12"
-								sm="6">
-								<DashboardCardComponent
-									:card="card"></DashboardCardComponent>
+								sm="6"
+							>
+								<DashboardCard :card="card"></DashboardCard>
 							</v-col>
 						</v-row>
 					</v-expansion-panel-text>
@@ -83,7 +72,7 @@
 </template>
 
 <script>
-import DashboardCardComponent from "@/components/ui/dashboard/DashboardCardComponent";
+import DashboardCard from "@/components/ui/dashboard/DashboardCard";
 
 export default {
 	data: () => ({
@@ -169,7 +158,7 @@ export default {
 		],
 	}),
 	components: {
-		DashboardCardComponent,
+		DashboardCard,
 	},
 };
 </script>

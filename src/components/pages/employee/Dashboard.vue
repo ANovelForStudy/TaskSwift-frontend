@@ -25,7 +25,7 @@
 								cols="12"
 								sm="3"
 							>
-								<DashboardCardComponent :card="card"></DashboardCardComponent>
+								<DashboardCard :card="card"></DashboardCard>
 							</v-col>
 						</v-row>
 					</v-expansion-panel-text>
@@ -42,7 +42,7 @@
 								cols="12"
 								sm="6"
 							>
-								<DashboardCardComponent :card="card"></DashboardCardComponent>
+								<DashboardCard :card="card"></DashboardCard>
 							</v-col>
 						</v-row>
 					</v-expansion-panel-text>
@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import DashboardCardComponent from "@/components/ui/dashboard/DashboardCardComponent";
+import DashboardCard from "@/components/ui/dashboard/DashboardCard";
 
 export default {
 	data: () => ({
@@ -108,7 +108,7 @@ export default {
 		],
 	}),
 	components: {
-		DashboardCardComponent,
+		DashboardCard,
 	},
 };
 </script>

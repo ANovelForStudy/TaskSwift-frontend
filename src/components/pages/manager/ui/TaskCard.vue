@@ -23,9 +23,7 @@
 					</div>
 					<v-card-subtitle>Категория: {{ task.category ? category?.name : "Без категории" }}</v-card-subtitle>
 					<v-card-subtitle>Исполнитель: {{ getEmployeeNameById(task.assigned_to) }}</v-card-subtitle>
-					<v-card-subtitle :class="task.is_completed ? 'text-success' : 'text-amber'"
-						>Статус: {{ task.is_completed ? "Завершена" : "Не завершена" }}</v-card-subtitle
-					>
+					<v-card-subtitle :class="taskStatus.class">Статус: {{ taskStatus.text }}</v-card-subtitle>
 				</div>
 			</div>
 			<v-card-text class="bg-card_body text-truncate">
@@ -103,6 +101,20 @@ export default {
 			required: false,
 		},
 	},
+	computed: {
+		taskStatus() {
+			const taskDeadline = moment(this.task.deadline);
+			const today = moment().startOf("day");
+
+			if (this.task.is_completed) {
+				return { text: "Завершена", class: "text-success" };
+			} else if (taskDeadline.isBefore(today)) {
+				return { text: "Просрочена", class: "text-error" };
+			} else {
+				return { text: "Не завершена", class: "text-amber" };
+			}
+		},
+	},
 	methods: {
 		formatDate(date) {
 			return moment(date).format("LLL");
@@ -112,7 +124,6 @@ export default {
 			return employee ? `${employee.first_name} ${employee.last_name} - ${employee.email}` : "Не назначен";
 		},
 	},
-	computed: {},
 };
 </script>
 

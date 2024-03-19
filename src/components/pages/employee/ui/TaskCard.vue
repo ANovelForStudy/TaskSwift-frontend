@@ -24,9 +24,7 @@
 						></div>
 					</div>
 					<v-card-subtitle>Категория: {{ task.category ? category?.name : "Без категории" }}</v-card-subtitle>
-					<v-card-subtitle :class="task.is_completed ? 'text-success' : 'text-amber'"
-						>Статус: {{ task.is_completed ? "Выполнена" : "Не выполнена" }}</v-card-subtitle
-					>
+					<v-card-subtitle :class="taskStatus.class">Статус: {{ taskStatus.text }}</v-card-subtitle>
 				</div>
 			</div>
 			<v-card-text class="bg-card_body text-truncate">
@@ -81,6 +79,20 @@ import TaskDetailsDialog from "./TaskDetailsDialog";
 export default {
 	components: {
 		TaskDetailsDialog,
+	},
+	computed: {
+		taskStatus() {
+			const taskDeadline = moment(this.task.deadline);
+			const today = moment().startOf("day");
+
+			if (this.task.is_completed) {
+				return { text: "Выполнена", class: "text-success" };
+			} else if (taskDeadline.isBefore(today)) {
+				return { text: "Просрочена", class: "text-error" };
+			} else {
+				return { text: "Не выполнена", class: "text-amber" };
+			}
+		},
 	},
 	props: {
 		task: {

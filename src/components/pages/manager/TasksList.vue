@@ -26,7 +26,10 @@
 			<v-row>
 				<v-col>
 					<span class="text-h5">Список задач</span><br />
-					<span>{{ tasks.length ? `Всего задач: ${tasks.length}` : `` }}</span>
+					<span
+						>{{ tasks.length ? `Всего задач: ${tasks.length}` : `` }}
+						{{ tasks.length !== sortedTasks.length ? `| Задачи согласно фильтрам: ${sortedTasks.length}` : `` }}</span
+					>
 				</v-col>
 			</v-row>
 			<v-row>
@@ -53,9 +56,9 @@
 						</template>
 					</v-btn>
 				</v-col>
-				<v-col lg="3"
+				<v-col lg="2"
 					><v-select
-						v-model="selectedFilterOption"
+						v-model="selectedStatusFilterOption"
 						:items="statusFilterOptions"
 						label="Фильтрация по статусу"
 						item-title="label"
@@ -65,7 +68,19 @@
 						color="accent"
 					></v-select
 				></v-col>
-				<v-col lg="3"
+				<v-col lg="2"
+					><v-select
+						v-model="selectedDeadlineFilterOption"
+						:items="deadlineFilterOptions"
+						label="Фильтрация по дедлайну"
+						item-title="label"
+						item-value="value"
+						prepend-inner-icon="local_fire_department"
+						variant="outlined"
+						color="accent"
+					></v-select
+				></v-col>
+				<v-col lg="2"
 					><v-select
 						v-model="selectedFilterCategory"
 						:items="[{ name: 'Все категории', id: 'all' }, { name: 'Без категории', id: null }, ...taskCategories]"
@@ -155,6 +170,9 @@ import useSortedTasks from "@/hooks/common/tasks/useSortedTasks";
 // Фильтрация задач по статусу
 import useStatusFilteredTasks from "@/hooks/common/tasks/useStatusFilteredTasks";
 
+// Фильтрация задач по дедлайну
+import useDeadlineFilteredTasks from "@/hooks/common/tasks/useDeadlineFilteredTasks";
+
 // Фильтрация по категории
 import useCategoryFilteredTasks from "@/hooks/common/tasks/useCategoryFilteredTasks";
 
@@ -183,11 +201,18 @@ export default {
 		const { taskCategories } = getTaskCategories();
 		const { tasks, isTasksLoading } = getManagerTasks();
 
+		// Обработка идёт цепочкой - сначала фильтрация по статусу,
+		// затем по дедлайну, после этого по категории,
+		// после этого выполняется поиск и лишь затем сортировка
+
 		// Фильтрация задач по статусу
-		const { statusFilterOptions, selectedFilterOption, statusFilteredTasks } = useStatusFilteredTasks(tasks);
+		const { statusFilterOptions, selectedStatusFilterOption, statusFilteredTasks } = useStatusFilteredTasks(tasks);
+
+		// Фильтрация задач по дедлайну
+		const { selectedDeadlineFilterOption, deadlineFilterOptions, deadlineFilteredTasks } = useDeadlineFilteredTasks(statusFilteredTasks);
 
 		// Фильтрация задач по категории
-		const { selectedFilterCategory, categoryFilteredTasks } = useCategoryFilteredTasks(statusFilteredTasks);
+		const { selectedFilterCategory, categoryFilteredTasks } = useCategoryFilteredTasks(deadlineFilteredTasks);
 
 		// Поиск задач
 		const { searchedItems, searchQuery } = useSearch(categoryFilteredTasks);
@@ -213,8 +238,13 @@ export default {
 
 			// Фильтрация по статусу
 			statusFilterOptions,
-			selectedFilterOption,
+			selectedStatusFilterOption,
 			statusFilteredTasks,
+
+			// Фильтрация по дедлайну
+			selectedDeadlineFilterOption,
+			deadlineFilterOptions,
+			deadlineFilteredTasks,
 
 			// Фильтрация по категории
 			selectedFilterCategory,
