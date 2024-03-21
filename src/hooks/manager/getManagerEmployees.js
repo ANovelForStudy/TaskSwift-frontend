@@ -1,8 +1,9 @@
 import { onMounted, ref } from "vue";
 import axios from "axios";
 
-export default function getManagerTasks() {
+export default function getManagerEmployees() {
 	const employees = ref([]);
+	const isEmployeesLoading = ref(true);
 
 	// Функция получения списка сотрудников
 	const fetchingEmployees = async () => {
@@ -11,6 +12,8 @@ export default function getManagerTasks() {
 			employees.value = response.data;
 		} catch (error) {
 			console.log(error);
+		} finally {
+			isEmployeesLoading.value = false;
 		}
 	};
 
@@ -20,5 +23,6 @@ export default function getManagerTasks() {
 
 	return {
 		employees,
+		isEmployeesLoading,
 	};
 }

@@ -13,7 +13,7 @@ export default function useStatusFilteredTasks(tasks) {
 		{ label: "Просрочены", value: "overdue" },
 	]);
 
-	// Метод фильтрации задач
+	// Вычисляемое свойство для получения задач в зависимости от их статуса
 	const statusFilteredTasks = computed(() => {
 		if (selectedStatusFilterOption.value === null) {
 			return tasks.value;

@@ -33,7 +33,7 @@
 				</v-col>
 			</v-row>
 			<v-row>
-				<v-col lg="3">
+				<v-col lg="2">
 					<v-select
 						v-model="selectedSortOption"
 						:items="sortOptions"
@@ -60,10 +60,22 @@
 					><v-select
 						v-model="selectedStatusFilterOption"
 						:items="statusFilterOptions"
-						label="Фильтрация по статусу"
+						label="Фильтрация по выполнению"
 						item-title="label"
 						item-value="value"
 						prepend-inner-icon="filter_alt"
+						variant="outlined"
+						color="accent"
+					></v-select
+				></v-col>
+				<v-col lg="2"
+					><v-select
+						v-model="selectedExecutorFilterOption"
+						:items="executorFilterOptions"
+						label="Фильтрация по исполнителю"
+						item-title="label"
+						item-value="value"
+						prepend-inner-icon="person"
 						variant="outlined"
 						color="accent"
 					></v-select
@@ -91,7 +103,7 @@
 						variant="outlined"
 						color="accent"
 					></v-select></v-col
-				><v-col lg="3">
+				><v-col lg="2">
 					<v-text-field
 						v-model="searchQuery"
 						label="Поиск"
@@ -176,6 +188,9 @@ import useDeadlineFilteredTasks from "@/hooks/common/tasks/useDeadlineFilteredTa
 // Фильтрация по категории
 import useCategoryFilteredTasks from "@/hooks/common/tasks/useCategoryFilteredTasks";
 
+// Фильтрация по наличию исполнителя
+import useExecutorFilteredTasks from "@/hooks/common/tasks/useExecutorFilteredTasks";
+
 // Поиск задач
 import useSearch from "@/hooks/common/useSearch";
 
@@ -211,8 +226,11 @@ export default {
 		// Фильтрация задач по дедлайну
 		const { selectedDeadlineFilterOption, deadlineFilterOptions, deadlineFilteredTasks } = useDeadlineFilteredTasks(statusFilteredTasks);
 
+		// Фильтрация задач по наличию исполнителя
+		const { selectedExecutorFilterOption, executorFilterOptions, executorFilteredTasks } = useExecutorFilteredTasks(deadlineFilteredTasks);
+
 		// Фильтрация задач по категории
-		const { selectedFilterCategory, categoryFilteredTasks } = useCategoryFilteredTasks(deadlineFilteredTasks);
+		const { selectedFilterCategory, categoryFilteredTasks } = useCategoryFilteredTasks(executorFilteredTasks);
 
 		// Поиск задач
 		const { searchedItems, searchQuery } = useSearch(categoryFilteredTasks);
@@ -245,6 +263,11 @@ export default {
 			selectedDeadlineFilterOption,
 			deadlineFilterOptions,
 			deadlineFilteredTasks,
+
+			// Фильтрация по наличию исполнителя
+			selectedExecutorFilterOption,
+			executorFilterOptions,
+			executorFilteredTasks,
 
 			// Фильтрация по категории
 			selectedFilterCategory,

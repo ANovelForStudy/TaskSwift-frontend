@@ -13,6 +13,19 @@
 		</div>
 		<div class="pb-7 pt-2">
 			<v-row>
+				<v-col>
+					<v-text-field
+						v-model="searchQuery"
+						label="Поиск по e-mail, фамилии, имени или телефону"
+						single-line
+						hide-details
+						prepend-inner-icon="search"
+						variant="outlined"
+						color="accent"
+					></v-text-field>
+				</v-col>
+			</v-row>
+			<v-row>
 				<v-list-item>
 					<ActionButton
 						icon="delete"
@@ -23,30 +36,31 @@
 				>
 			</v-row>
 		</div>
+
 		<v-data-table
 			:headers="headers"
 			:items="employees"
-			:loading="loading"
+			:loading="isEmployeesLoading"
 			v-model="selected"
 			show-select
 			class="elevation-5 rounded-lg"
+			:search="searchQuery"
+			@click:row="selectEmployee"
 		>
-			<template v-slot:loading>
-				<v-skeleton-loader type="table-row@5"></v-skeleton-loader>
-			</template>
-
-			<template v-slot:top>
-				<v-toolbar color="white">
-					<v-toolbar-title>Сотрудники</v-toolbar-title>
-				</v-toolbar>
-			</template>
-
 			<template v-slot:item.date_of_birth="{ item }">
 				{{ item.date_of_birth ? formatDate(item.date_of_birth) : "" }}
 			</template>
 
+			<template v-slot:item.date_joined="{ item }">
+				{{ item.date_joined ? formatDate(item.date_joined) : "" }}
+			</template>
+
 			<template v-slot:item.created_at="{ item }">
 				{{ item.created_at ? formatDateTime(item.created_at) : "" }}
+			</template>
+
+			<template v-slot:loading>
+				<v-skeleton-loader type="table-row@5"></v-skeleton-loader>
 			</template>
 		</v-data-table>
 
@@ -67,9 +81,14 @@
 </template>
 
 <script>
+// Сторонние библиотеки
 import moment from "moment";
 import axios from "axios";
 
+// Получение данных
+import getManagerEmployees from "@/hooks/manager/getManagerEmployees";
+
+// Компоненты
 import ActionButton from "@/components/ui/ActionButton";
 import AddEmployeeDialog from "./ui/AddEmployeeDialog";
 
@@ -77,7 +96,6 @@ export default {
 	data: () => ({
 		selected: [],
 		snackbar: false,
-		loading: false,
 		headers: [
 			{ title: "Фамилия", value: "last_name" },
 			{ title: "Имя", value: "first_name" },
@@ -90,16 +108,16 @@ export default {
 			{ title: "Экстренный телефон", value: "emergency_contact_phone" },
 			{ title: "Дата создания аккаунта", value: "created_at" },
 		],
-		employees: [],
+		searchQuery: "",
 	}),
 	components: {
 		ActionButton,
 		AddEmployeeDialog,
 	},
-	created() {
-		this.loading = true;
+	setup() {
+		const { employees, isEmployeesLoading } = getManagerEmployees();
 
-		this.getEmployees();
+		return { employees, isEmployeesLoading };
 	},
 	methods: {
 		formatDate(date) {
@@ -107,19 +125,6 @@ export default {
 		},
 		formatDateTime(date) {
 			return moment(date).format("DD.MM.YYYY в hh:mm:ss");
-		},
-		async getEmployees() {
-			await axios
-				.get("/api/v1/users/employees/")
-				.then((response) => {
-					this.employees = response.data;
-				})
-				.catch((error) => {
-					console.log(error);
-				})
-				.finally(() => {
-					this.loading = false;
-				});
 		},
 		async addEmployee(employee) {
 			this.employees.push(employee);
