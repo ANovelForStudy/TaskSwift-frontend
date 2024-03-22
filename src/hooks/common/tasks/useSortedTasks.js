@@ -1,10 +1,18 @@
 import { ref, computed } from "vue";
 
 export default function useSortedTasks(tasks) {
+	// Стандарная опция сортировки (требуется для сброса фильтров)
+	const defaultSortOption = "deadline";
+
+	// Стандартное направление сортировки (требуется для сброса фильтров)
+	const defaultSortDirection = true;
+
 	// Выбранная опция сортировки
-	const selectedSortOption = ref("deadline");
+	const selectedSortOption = ref(defaultSortOption);
+
 	// Направление сортировки
-	const isSortAscending = ref(true);
+	const isSortAscending = ref(defaultSortDirection);
+
 	// Опции сортировки
 	const sortOptions = ref([
 		{ label: "Дате создания", value: "created_at" },
@@ -46,5 +54,5 @@ export default function useSortedTasks(tasks) {
 		isSortAscending.value = !isSortAscending.value;
 	};
 
-	return { selectedSortOption, sortOptions, sortedTasks, toggleSortDirection, isSortAscending };
+	return { selectedSortOption, sortOptions, sortedTasks, toggleSortDirection, isSortAscending, defaultSortOption, defaultSortDirection };
 }

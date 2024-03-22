@@ -33,7 +33,10 @@
 				</v-col>
 			</v-row>
 			<v-row>
-				<v-col lg="2">
+				<v-col
+					lg="2"
+					sm="12"
+				>
 					<v-select
 						v-model="selectedSortOption"
 						:items="sortOptions"
@@ -44,19 +47,10 @@
 						variant="outlined"
 						color="accent"
 					></v-select>
-					<v-btn
-						class="rounded-xl"
-						variant="tonal"
-						color="accent"
-						@click="toggleSortDirection"
-					>
-						{{ isSortAscending ? "По возрастанию" : "По убыванию" }}
-						<template v-slot:prepend>
-							<v-icon>{{ isSortAscending ? "expand_less" : "expand_more" }}</v-icon>
-						</template>
-					</v-btn>
 				</v-col>
-				<v-col lg="2"
+				<v-col
+					lg="2"
+					sm="6"
 					><v-select
 						v-model="selectedStatusFilterOption"
 						:items="statusFilterOptions"
@@ -68,7 +62,9 @@
 						color="accent"
 					></v-select
 				></v-col>
-				<v-col lg="2"
+				<v-col
+					lg="2"
+					sm="6"
 					><v-select
 						v-model="selectedExecutorFilterOption"
 						:items="executorFilterOptions"
@@ -80,7 +76,9 @@
 						color="accent"
 					></v-select
 				></v-col>
-				<v-col lg="2"
+				<v-col
+					lg="2"
+					sm="6"
 					><v-select
 						v-model="selectedDeadlineFilterOption"
 						:items="deadlineFilterOptions"
@@ -92,9 +90,11 @@
 						color="accent"
 					></v-select
 				></v-col>
-				<v-col lg="2"
+				<v-col
+					lg="2"
+					sm="6"
 					><v-select
-						v-model="selectedFilterCategory"
+						v-model="selectedCategoryFilterOption"
 						:items="[{ name: 'Все категории', id: 'all' }, { name: 'Без категории', id: null }, ...taskCategories]"
 						item-title="name"
 						item-value="id"
@@ -103,7 +103,10 @@
 						variant="outlined"
 						color="accent"
 					></v-select></v-col
-				><v-col lg="2">
+				><v-col
+					lg="2"
+					sm="12"
+				>
 					<v-text-field
 						v-model="searchQuery"
 						label="Поиск"
@@ -113,6 +116,31 @@
 						color="accent"
 					></v-text-field
 				></v-col>
+			</v-row>
+			<v-row class="px-3 pb-3 py-0 my-0 offset-0">
+				<div
+					><v-btn
+						class="rounded-xl"
+						variant="tonal"
+						color="accent"
+						@click="toggleSortDirection"
+					>
+						{{ isSortAscending ? "По возрастанию" : "По убыванию" }}
+						<template v-slot:prepend>
+							<v-icon>{{ isSortAscending ? "expand_less" : "expand_more" }}</v-icon>
+						</template>
+					</v-btn></div
+				>
+				<v-spacer></v-spacer>
+				<div
+					><ActionButton
+						color="error"
+						icon="delete"
+						@click="resetFilters"
+					>
+						Сбросить фильтры
+					</ActionButton></div
+				>
 			</v-row>
 		</div>
 		<div
@@ -221,22 +249,25 @@ export default {
 		// после этого выполняется поиск и лишь затем сортировка
 
 		// Фильтрация задач по статусу
-		const { statusFilterOptions, selectedStatusFilterOption, statusFilteredTasks } = useStatusFilteredTasks(tasks);
+		const { statusFilterOptions, selectedStatusFilterOption, statusFilteredTasks, defaultStatusFilterOption } = useStatusFilteredTasks(tasks);
 
 		// Фильтрация задач по дедлайну
-		const { selectedDeadlineFilterOption, deadlineFilterOptions, deadlineFilteredTasks } = useDeadlineFilteredTasks(statusFilteredTasks);
+		const { selectedDeadlineFilterOption, deadlineFilterOptions, deadlineFilteredTasks, defaultDeadlineFilterOption } =
+			useDeadlineFilteredTasks(statusFilteredTasks);
 
 		// Фильтрация задач по наличию исполнителя
-		const { selectedExecutorFilterOption, executorFilterOptions, executorFilteredTasks } = useExecutorFilteredTasks(deadlineFilteredTasks);
+		const { selectedExecutorFilterOption, executorFilterOptions, executorFilteredTasks, defaultExecutorFilterOption } =
+			useExecutorFilteredTasks(deadlineFilteredTasks);
 
 		// Фильтрация задач по категории
-		const { selectedFilterCategory, categoryFilteredTasks } = useCategoryFilteredTasks(executorFilteredTasks);
+		const { selectedCategoryFilterOption, categoryFilteredTasks, defaultCategoryFilterOption } = useCategoryFilteredTasks(executorFilteredTasks);
 
 		// Поиск задач
 		const { searchedItems, searchQuery } = useSearch(categoryFilteredTasks);
 
 		// Сортировка задач
-		const { selectedSortOption, sortOptions, sortedTasks, toggleSortDirection, isSortAscending } = useSortedTasks(searchedItems);
+		const { selectedSortOption, sortOptions, sortedTasks, toggleSortDirection, isSortAscending, defaultSortOption, defaultSortDirection } =
+			useSortedTasks(searchedItems);
 
 		return {
 			// Данные
@@ -253,25 +284,31 @@ export default {
 			sortedTasks,
 			toggleSortDirection,
 			isSortAscending,
+			defaultSortOption,
+			defaultSortDirection,
 
 			// Фильтрация по статусу
 			statusFilterOptions,
 			selectedStatusFilterOption,
 			statusFilteredTasks,
+			defaultStatusFilterOption,
 
 			// Фильтрация по дедлайну
 			selectedDeadlineFilterOption,
 			deadlineFilterOptions,
 			deadlineFilteredTasks,
+			defaultDeadlineFilterOption,
 
 			// Фильтрация по наличию исполнителя
 			selectedExecutorFilterOption,
 			executorFilterOptions,
 			executorFilteredTasks,
+			defaultExecutorFilterOption,
 
 			// Фильтрация по категории
-			selectedFilterCategory,
+			selectedCategoryFilterOption,
 			categoryFilteredTasks,
+			defaultCategoryFilterOption,
 
 			// Поиск
 			searchedItems,
@@ -285,6 +322,17 @@ export default {
 		ActionButton,
 	},
 	methods: {
+		resetFilters() {
+			this.selectedSortOption = this.defaultSortOption;
+			this.selectedStatusFilterOption = this.defaultStatusFilterOption;
+			this.selectedDeadlineFilterOption = this.defaultDeadlineFilterOption;
+			this.selectedExecutorFilterOption = this.defaultExecutorFilterOption;
+			this.selectedCategoryFilterOption = this.defaultCategoryFilterOption;
+
+			this.searchQuery = "";
+
+			this.isSortAscending = this.defaultSortDirection;
+		},
 		async deleteTask(taskId) {
 			await axios
 				.delete(`api/v1/tasks/${taskId}/`)

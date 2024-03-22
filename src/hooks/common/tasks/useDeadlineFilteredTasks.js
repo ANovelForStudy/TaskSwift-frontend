@@ -2,8 +2,11 @@ import { ref, computed } from "vue";
 import moment from "moment";
 
 export default function useDeadlineFilteredTasks(tasks) {
+	// Стандарная опция фильтрации по дедлайну (требуется для сброса фильтров)
+	const defaultDeadlineFilterOption = null;
+
 	// Выбранная опция фильтрации по дедлайну
-	const selectedDeadlineFilterOption = ref(null);
+	const selectedDeadlineFilterOption = ref(defaultDeadlineFilterOption);
 
 	// Все опции фильтрации по дедлайну
 	const deadlineFilterOptions = ref([
@@ -49,5 +52,6 @@ export default function useDeadlineFilteredTasks(tasks) {
 		selectedDeadlineFilterOption,
 		deadlineFilterOptions,
 		deadlineFilteredTasks,
+		defaultDeadlineFilterOption,
 	};
 }

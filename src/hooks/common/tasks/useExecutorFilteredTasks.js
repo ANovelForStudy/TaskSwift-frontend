@@ -1,8 +1,11 @@
 import { ref, computed } from "vue";
 
 export default function useExecutorFilteredTasks(tasks) {
+	// Стандарная опция фильтрации по наличию исполнителя (требуется для сброса фильтров)
+	const defaultExecutorFilterOption = null;
+
 	// Выбранная на данный момент опция фильтрации
-	const selectedExecutorFilterOption = ref(null);
+	const selectedExecutorFilterOption = ref(defaultExecutorFilterOption);
 
 	// Все опции фильтрации по наличию исполнителя
 	const executorFilterOptions = ref([
@@ -25,5 +28,6 @@ export default function useExecutorFilteredTasks(tasks) {
 		selectedExecutorFilterOption,
 		executorFilterOptions,
 		executorFilteredTasks,
+		defaultExecutorFilterOption,
 	};
 }

@@ -1,20 +1,24 @@
 import { ref, computed } from "vue";
 
 export default function useCategoryFilteredTasks(tasks) {
+	// Стандарная опция фильтрации по конкретной категории (требуется для сброса фильтров)
+	const defaultCategoryFilterOption = "all";
+
 	// Категория, по которой будет происходить фильтрация
-	const selectedFilterCategory = ref("all");
+	const selectedCategoryFilterOption = ref(defaultCategoryFilterOption);
 
 	// Метод фильтрации задач
 	const categoryFilteredTasks = computed(() => {
-		if (selectedFilterCategory.value === "all") {
+		if (selectedCategoryFilterOption.value === "all") {
 			return tasks.value;
 		} else {
-			return tasks.value.filter((task) => task?.category === selectedFilterCategory.value);
+			return tasks.value.filter((task) => task?.category === selectedCategoryFilterOption.value);
 		}
 	});
 
 	return {
-		selectedFilterCategory,
+		selectedCategoryFilterOption,
 		categoryFilteredTasks,
+		defaultCategoryFilterOption,
 	};
 }

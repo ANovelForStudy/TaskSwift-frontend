@@ -2,8 +2,11 @@ import { ref, computed } from "vue";
 import moment from "moment";
 
 export default function useStatusFilteredTasks(tasks) {
+	// Стандарная опция фильтрации по статусу (требуется для сброса фильтров)
+	const defaultStatusFilterOption = null;
+
 	// Выбранная опция фильтрации
-	const selectedStatusFilterOption = ref(null);
+	const selectedStatusFilterOption = ref(defaultStatusFilterOption);
 
 	// Все опции фильтрации
 	const statusFilterOptions = ref([
@@ -33,5 +36,6 @@ export default function useStatusFilteredTasks(tasks) {
 		statusFilterOptions,
 		selectedStatusFilterOption,
 		statusFilteredTasks,
+		defaultStatusFilterOption,
 	};
 }
