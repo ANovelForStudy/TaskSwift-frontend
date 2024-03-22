@@ -39,7 +39,7 @@
 					:prepend-avatar="userData.profile_picture || `https://ui-avatars.com/api/?name=${userData.first_name}+${userData.last_name}`"
 					:title="userData.first_name + ' ' + userData.last_name"
 					:subtitle="userData.email"
-					to="/account"
+					:to="{ name: 'Profile' }"
 					color="accent"
 					nav
 				></v-list-item>

@@ -116,7 +116,10 @@
 		<v-row>
 			<transition-group name="list">
 				<v-col
-					sm="4"
+					sm="12"
+					md="6"
+					lg="4"
+					xxl="3"
 					v-for="task in sortedTasks"
 					:key="task.id"
 				>

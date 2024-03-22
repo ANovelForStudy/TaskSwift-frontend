@@ -5,6 +5,7 @@ import LoginPage from "@/components/pages/auth/LoginPage";
 
 // Общие страницы
 import AboutPage from "@/components/pages/base/About";
+import ProfilePage from "@/components/pages/base/Profile";
 
 // Страницы работника
 import EmployeeDashboardPage from "@/components/pages/employee/Dashboard";
@@ -16,7 +17,6 @@ import ManagerTaskManagementPage from "@/components/pages/manager/TasksList";
 import ManagerEmployeeManagementPage from "@/components/pages/manager/EmployeesList";
 import ManagerTaskCategoriesManagementPage from "@/components/pages/manager/TaskCategoriesList.vue";
 
-import AccountPage from "@/components/pages/Account";
 import FeedbackPage from "@/components/pages/Feedback";
 
 // Страницы-обработчики ошибок
@@ -80,6 +80,12 @@ const routes = [
 					next({ name: "Error404" });
 			}
 		},
+	},
+	{
+		path: "/profile",
+		name: "Profile",
+		component: ProfilePage,
+		meta: { requiredRoles: [], requiresAuth: false },
 	},
 	{
 		path: "/tasks",
@@ -177,12 +183,6 @@ const routes = [
 		path: "/feedback",
 		name: "Feedback",
 		component: FeedbackPage,
-		meta: { requiredRoles: [], requiresAuth: true },
-	},
-	{
-		path: "/account",
-		name: "Account",
-		component: AccountPage,
 		meta: { requiredRoles: [], requiresAuth: true },
 	},
 	{
