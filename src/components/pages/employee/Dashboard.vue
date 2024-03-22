@@ -78,8 +78,8 @@
 								<DashboardCardNew
 									title="Дедлайн сегодня"
 									icon="today"
-									color="yellow-darken-3"
-									second_color="yellow-darken-4"
+									color="orange-darken-2"
+									second_color="orange-darken-3"
 									>{{ totalTodayTasks }}</DashboardCardNew
 								>
 							</v-col>
@@ -91,8 +91,8 @@
 								<DashboardCardNew
 									title="Дедлайн завтра"
 									icon="calendar_month"
-									color="deep-orange-darken-3"
-									second_color="deep-orange-darken-4"
+									color="green-darken-2"
+									second_color="green-darken-3"
 									>{{ totalTomorrowTasks }}</DashboardCardNew
 								>
 							</v-col>

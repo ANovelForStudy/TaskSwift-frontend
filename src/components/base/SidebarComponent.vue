@@ -41,6 +41,7 @@
 					:subtitle="userData.email"
 					:to="{ name: 'Profile' }"
 					color="accent"
+					class="py-2"
 					nav
 				></v-list-item>
 			</v-list>

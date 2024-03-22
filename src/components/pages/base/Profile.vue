@@ -26,7 +26,7 @@
 				<div class="my-5"></div>
 				<v-card>
 					<v-card-title>Контакты</v-card-title>
-					<v-card-text
+					<v-card-text class="my-3"
 						><v-text-field
 							v-model="user.phone"
 							label="Номер телефона"
@@ -51,7 +51,7 @@
 				<div class="my-5"></div>
 				<v-card>
 					<v-card-title>Контакты для экстренных случаев</v-card-title>
-					<v-card-text
+					<v-card-text class="my-3"
 						><v-text-field
 							v-model="user.emergency_contact_name"
 							label="Имя контактного лица для экстренных случаев"
@@ -74,7 +74,7 @@
 				md="8"
 			>
 				<v-card>
-					<v-card-title>Общая информация</v-card-title>
+					<v-card-title class="my-3">Общая информация</v-card-title>
 					<v-card-text>
 						<v-form
 							ref="form"
@@ -139,6 +139,7 @@
 								icon="update"
 								@click="updateProfile"
 								:disabled="!valid"
+								:loading="loading"
 								>Обновить профиль</ActionButton
 							>
 						</v-form>
@@ -146,6 +147,19 @@
 				</v-card>
 			</v-col>
 		</v-row>
+
+		<v-snackbar v-model="snackbar">
+			{{ snackbar_text }}
+
+			<template v-slot:actions>
+				<v-btn
+					color="accent"
+					variant="text"
+					@click="snackbar = false"
+					>Закрыть сообщение</v-btn
+				>
+			</template>
+		</v-snackbar>
 	</v-container>
 </template>
 
@@ -160,15 +174,19 @@ import getUserInfo from "@/hooks/common/users/getUserInfo";
 import ActionButton from "@/components/ui/ActionButton";
 
 export default {
-	data() {
-		return {
-			valid: true,
-			genderItems: [
-				{ title: "Мужской", value: "M" },
-				{ title: "Женский", value: "F" },
-			],
-		};
-	},
+	data: () => ({
+		// Уведомление снизу об успешном создании задачи
+		snackbar: false,
+		snackbar_text: "",
+
+		loading: false,
+
+		valid: true,
+		genderItems: [
+			{ title: "Мужской", value: "M" },
+			{ title: "Женский", value: "F" },
+		],
+	}),
 	components: {
 		ActionButton,
 	},
@@ -186,20 +204,26 @@ export default {
 	},
 	methods: {
 		updateProfile() {
-			if (this.$refs.form.validate()) {
-				axios
-					.put("/api/v1/auth/users/me/", this.user)
-					.then((response) => {
-						// Перезаписать объект пользователя
-						this.user = response.data;
+			// TODO: Добавить глубокую проверку на идентичность значений полей формы и
+			// значений полей объекта, чтобы лишний раз не дёргать сервер
 
-						// Отобразить уведомление об успешном обновлении
-					})
-					.catch((error) => {
-						// Отобразить ошибку, если она возникла при обновлении
-						console.error(error);
-					});
-			}
+			axios
+				.put("/api/v1/auth/users/me/", this.user)
+				.then((response) => {
+					// Отобразить уведомление об успешном обновлении
+					snackbar_text: "Данные профиля успешно обновлены";
+					snackbar: true;
+
+					// Перезаписать объект пользователя
+					this.user = response.data;
+				})
+				.catch((error) => {
+					// Отобразить ошибку, если она возникла при обновлении
+					console.error(error);
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 	},
 };

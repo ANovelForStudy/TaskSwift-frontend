@@ -168,13 +168,11 @@ import TaskCard from "./ui/TaskCard";
 import ActionButton from "@/components/ui/ActionButton";
 
 export default {
-	data() {
-		return {
-			// Уведомление снизу об успешном создании задачи
-			snackbar: false,
-			snackbar_text: "",
-		};
-	},
+	data: () => ({
+		// Уведомление снизу об успешном создании задачи
+		snackbar: false,
+		snackbar_text: "",
+	}),
 	setup(props) {
 		// Получение данных из API
 		const { taskCategories } = getTaskCategories();
