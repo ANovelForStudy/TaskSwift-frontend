@@ -50,13 +50,14 @@
 									<v-col>
 										<v-container>
 											<v-color-picker
-												class="mx-auto"
+												class="mx-auto rounded-0"
 												v-model="category.color"
 												elevation="0"
-												label="Выбор цвета категории"
+												label="Выбор цвета карточки"
 												mode="hex"
 												hide-inputs
-												hide-swatches
+												show-swatches
+												:swatches="swatches"
 												:swatches-max-height="80"
 											></v-color-picker>
 										</v-container>
@@ -71,7 +72,6 @@
 											hint="Только для чтения"
 										></v-text-field>
 									</v-col>
-									<v-col> </v-col>
 								</v-row>
 							</v-container>
 						</v-container>
@@ -112,7 +112,17 @@ import ActionButton from "@/components/ui/ActionButton";
 import useCreateTaskCategory from "@/hooks/manager/useCreateTaskCategory";
 
 export default {
-	data: () => ({}),
+	data: () => ({
+		swatches: [
+			["#F44336", "#E91E63", "#9C27B0"],
+			["#673AB7", "#3F51B5", "#2196F3"],
+			["#03A9F4", "#00BCD4", "#009688"],
+			["#4CAF50", "#8BC34A", "#CDDC39"],
+			["#FFEB3B", "#FFC107", "#FF9800"],
+			["#FF5722", "#795548", "#607D8B"],
+			["#9E9E9E", "#FFFFFF", "#C6FF00"],
+		],
+	}),
 	setup(props, context) {
 		const { category, createTaskCategory, isRequestProcessing, isDialogOpen } = useCreateTaskCategory(context.emit);
 
