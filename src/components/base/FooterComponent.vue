@@ -20,7 +20,7 @@
 
 			<v-btn
 				:to="{ name: 'Login' }"
-				v-if="!this.$store.state.user.isAuthenticated"
+				v-if="!this.$store.getters['auth/isAuthenticated']"
 				variant="plain"
 				class="mx-2"
 				rounded="xl"
@@ -29,8 +29,8 @@
 			</v-btn>
 
 			<v-btn
-				@click="this.$store.dispatch('logout', this.$router)"
-				v-if="this.$store.state.user.isAuthenticated"
+				@click="this.$store.dispatch('auth/logout', this.$router)"
+				v-if="this.$store.getters['auth/isAuthenticated']"
 				variant="plain"
 				class="mx-2"
 				rounded="xl"

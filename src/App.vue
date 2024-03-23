@@ -1,8 +1,8 @@
 <template>
 	<v-app theme="darkGreyGreen">
-		<SidebarComponent v-if="this.$store.state.user.isAuthenticated"></SidebarComponent>
+		<SidebarComponent v-if="this.$store.getters['auth/isAuthenticated']"></SidebarComponent>
 
-		<TopbarComponent v-if="this.$store.state.user.isAuthenticated"></TopbarComponent>
+		<TopbarComponent v-if="this.$store.getters['auth/isAuthenticated']"></TopbarComponent>
 
 		<v-main style="min-height: 80vh">
 			<router-view></router-view>
@@ -26,19 +26,18 @@ export default {
 		TopbarComponent,
 	},
 	beforeCreate() {
-		// Вызываем мутацию для инициализации хранилища начальными значениями токена и статуса аутентификации Vuex
-		this.$store.commit("initializeStore");
+		// Инициализация состояния хранилища после перезагрузки страницы
+		this.$store.dispatch("auth/initializeStore");
 
-		// Получаем токен пользователя из состояния (state) хранилища
-		const token = this.$store.state.user.token;
+		// Получить токен из Vuex
+		const token = this.$store.getters["auth/getUserToken"];
 
-		// Устанавливаем заголовок авторизации в запросах для всех запросов Axios, если токен доступен
+		// Если токен существует
 		if (token) {
+			// Установить заголовок авторизации Axios
 			axios.defaults.headers.common["Authorization"] = "Token " + token;
-			// Получаем данные пользователя, если токен нам доступен
-			this.$store.dispatch("fetchUser");
 		} else {
-			// Если токен отсутствует, очищаем в запросах заголовок авторизации
+			// Очистить заголовок авторизации Axios
 			axios.defaults.headers.common["Authorization"] = "";
 		}
 	},

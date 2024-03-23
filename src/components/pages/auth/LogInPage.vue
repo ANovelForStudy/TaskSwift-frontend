@@ -78,102 +78,74 @@ import axios from "axios";
 
 export default {
 	data: () => ({
+		// Состояние видимости пароля
 		showPassword: false,
-		// Состояние видимости спиннера
-		loading: false,
+
 		// Состояние галочки "Запомнить меня"
 		isRemembered: false,
+
+		// Состояние видимости спиннера
+		loading: false,
+
+		// Поля формы входа в систему
 		form: {
 			email: "test_email_2@gmail.com",
 			password: "test5test5",
 		},
+
+		// Список ошибок формы
 		formErrors: [],
 	}),
 	methods: {
 		// Валидация и отправка формы на сервер и получение токена
-		submitForm() {
-			// Очистка заголовка с авторизационными данными (токеном)
-			axios.defaults.headers.common["Authorization"] = "";
-
-			// Удаление токена из локального хранилища
-			localStorage.removeItem("userToken");
-
-			// Очистка массива ошибок валидации и входа
-			this.formErrors = [];
-
-			// Проверка указания электронной почты
-			if (this.form.email === "") {
-				this.formErrors.push("Требуется указать адрес электронной почты!");
-			}
-
-			// Проверка на соответствие почты определённому регулярному выражению
-			const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-
-			if (!this.form.email.match(validRegex)) {
-				this.formErrors.push("Электронная почта имеет неверный формат!");
-			}
-
-			// Проверка указания электронной почты
-			if (this.form.password === "") {
-				this.formErrors.push("Требуется указать пароль!");
-			}
-
-			// Если ошибок валидации нет, то начать процедуру аутентификации
-			if (!this.formErrors.length) {
-				// Включение спиннера
+		async submitForm() {
+			// TODO: Вернуть и поправить валидацию формы
+			try {
+				// Включить круговой индикатор загрузки данных
 				this.loading = true;
 
-				axios
-					.post("/api/v1/auth/token/login/", this.form) // Отправка POST-запроса с данными формы
-					.then((response) => {
-						// Извлечение токена
-						const token = response.data.auth_token;
+				// Отправить POST-запрос с данными формы для получения токена
+				const tokenResponse = await axios.post("/api/v1/auth/token/login", this.form);
 
-						// Запись токена в соответствующий заголовок
-						axios.defaults.headers.common["Authorization"] = "Token " + token;
+				// Извлечь токен из ответа
+				const token = tokenResponse.data.auth_token;
 
-						// Получение данных пользователя
-						this.$store.dispatch("fetchUser");
+				// Записать токен в заголовок авторизации
+				axios.defaults.headers.common["Authorization"] = "Token " + token;
 
-						// Вызов мутации из Vuex для записи токена в состояние
-						this.$store.commit("setToken", token);
+				// Записать токен в Vuex
+				this.$store.commit("auth/setToken", token);
 
-						// Если пользователь поставил галочку "запомнить меня"
-						if (this.isRemembered) {
-							// Запись токена в локальное хранилище
-							localStorage.setItem("userToken", token);
-						}
+				// Отправить GET-запрос для получения данных пользователя
+				const userDataResponse = await axios.get("/api/v1/auth/users/me");
 
-						setTimeout(() => {
-							// Перенаправление на домашнюю страницу
-							this.$router.push({ name: "Home" });
-						}, 300);
-					})
-					.catch((error) => {
-						// Обработка ошибки: если получен ответ от сервера
-						if (error.response) {
-							// Итерация по свойствам объекта с ошибками в данных ответа
-							for (const property in error.response.data) {
-								// Добавление ошибок в массив формы для отображения пользователю
-								this.formErrors.push(error.response.data[property].toString());
-							}
+				// Извлечь данные пользователя из ответа
+				const userData = userDataResponse.data;
 
-							// Вывод данных ошибки из ответа сервера в консоль
-							console.log(JSON.stringify(error.response.data));
-						}
-						// Обработка ошибки: если сообщение об ошибке доступно
-						else if (error.message) {
-							// Добавление общего сообщения об ошибке в массив формы
-							this.formErrors.push("Что-то пошло не так! Пожалуйста, попробуйте ещё раз!");
+				// Записать данные пользователя в Vuex
+				this.$store.commit("auth/setUserData", userData);
 
-							// Вывод исключения в консоль
-							console.log(error);
-						}
-					})
-					.finally(() => {
-						// Спрятать спиннер по завершению
-						this.loading = false;
-					});
+				// Если стоит чекбокс "Запомнить меня"
+				if (this.isRemembered) {
+					// Записать токен в локальное хранилище
+					localStorage.setItem("userToken", token);
+
+					// Записать данные пользователя в локальное хранилище
+					localStorage.setItem("userData", JSON.stringify(userData));
+				}
+
+				// Перенаправить пользователя на домашнюю страницу
+				this.$router.push({
+					name: "Home",
+				});
+			} catch (error) {
+				console.log(error);
+
+				// В случае, если произошла ошибка, совершить выход из системы и удалить данные
+				this.$store.dispatch("auth/logout", this.$router);
+			} finally {
+				// Выключить круговой индикатор загрузки данных
+				this.loading = false;
 			}
 		},
 	},

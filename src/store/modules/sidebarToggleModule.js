@@ -1,4 +1,5 @@
-export const sidebarDrawerModule = {
+export default {
+	namespaced: true,
 	state: () => ({
 		isRail: true,
 	}),
@@ -7,5 +8,4 @@ export const sidebarDrawerModule = {
 			state.isRail = !state.isRail;
 		},
 	},
-	namespaced: true,
 };

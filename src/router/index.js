@@ -32,9 +32,9 @@ const routes = [
 	{
 		path: "/",
 		name: "Home",
+		meta: { requiredRoles: [], requiresAuth: true },
 		beforeEnter(to, from, next) {
-			const userType = store.state?.user?.data?.user_type;
-
+			const userType = store.getters["auth/getUserData"]?.user_type;
 			switch (userType) {
 				case Roles.Employee:
 					next({ name: "EmployeeHome" });
@@ -53,8 +53,7 @@ const routes = [
 		component: EmployeeDashboardPage,
 		meta: { requiredRoles: [], requiresAuth: true },
 		beforeEnter(to, from, next) {
-			const userType = store.state?.user?.data?.user_type;
-
+			const userType = store.getters["auth/getUserData"]?.user_type;
 			switch (userType) {
 				case Roles.Employee:
 					next();
@@ -70,8 +69,7 @@ const routes = [
 		component: ManagerDashboardPage,
 		meta: { requiredRoles: [], requiresAuth: true },
 		beforeEnter(to, from, next) {
-			const userType = store.state?.user?.data?.user_type;
-
+			const userType = store.getters["auth/getUserData"]?.user_type;
 			switch (userType) {
 				case Roles.Manager:
 					next();
@@ -85,14 +83,14 @@ const routes = [
 		path: "/profile",
 		name: "Profile",
 		component: ProfilePage,
-		meta: { requiredRoles: [], requiresAuth: false },
+		meta: { requiredRoles: [], requiresAuth: true },
 	},
 	{
 		path: "/tasks",
 		name: "Tasks",
+		meta: { requiredRoles: [], requiresAuth: true },
 		beforeEnter(to, from, next) {
-			const userType = store.state?.user?.data?.user_type;
-
+			const userType = store.getters["auth/getUserData"]?.user_type;
 			switch (userType) {
 				case Roles.Employee:
 					next({ name: "EmployeeTasks" });
@@ -111,8 +109,7 @@ const routes = [
 		component: EmployeeTaskManagementPage,
 		meta: { requiredRoles: [], requiresAuth: true },
 		beforeEnter(to, from, next) {
-			const userType = store.state?.user?.data?.user_type;
-
+			const userType = store.getters["auth/getUserData"]?.user_type;
 			switch (userType) {
 				case Roles.Employee:
 					next();
@@ -128,8 +125,7 @@ const routes = [
 		component: ManagerTaskManagementPage,
 		meta: { requiredRoles: [], requiresAuth: true },
 		beforeEnter(to, from, next) {
-			const userType = store.state?.user?.data?.user_type;
-
+			const userType = store.getters["auth/getUserData"]?.user_type;
 			switch (userType) {
 				case Roles.Manager:
 					next();
@@ -145,8 +141,7 @@ const routes = [
 		component: ManagerTaskCategoriesManagementPage,
 		meta: { requiredRoles: [], requiresAuth: true },
 		beforeEnter(to, from, next) {
-			const userType = store.state?.user?.data?.user_type;
-
+			const userType = store.getters["auth/getUserData"]?.user_type;
 			switch (userType) {
 				case Roles.Manager:
 					next();
@@ -162,8 +157,7 @@ const routes = [
 		component: ManagerEmployeeManagementPage,
 		meta: { requiredRoles: [], requiresAuth: true },
 		beforeEnter(to, from, next) {
-			const userType = store.state?.user?.data?.user_type;
-
+			const userType = store.getters["auth/getUserData"]?.user_type;
 			switch (userType) {
 				case Roles.Manager:
 					next();
@@ -206,104 +200,16 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
 	const requiresAuth = to.meta.requiresAuth;
-	const userType = store.state.user?.data?.user_type;
 
-	// Требуется ли аутентификация для посещения запрашиваемой страницы и при этом пользователь ещё не аутентифицирован
-	if (requiresAuth && !store.state.user.isAuthenticated) {
+	// Если для посещения страницы требуется аутентификация и пользователь ещё не аутентифицирован
+	if (requiresAuth && !store.getters["auth/isAuthenticated"]) {
 		// Перенаправление на страницу входа
 		next({
 			name: "Login",
 		});
 	}
-	// // Если аутентификация не требуется, или если пользователь уже аутентифицирован
-	// switch (to.name) {
-	// 	// Главная страница со статистикой
-	// 	case "Home":
-	// 		switch (userType) {
-	// 			case Roles.Employee:
-	// 				next({ name: "EmployeeHome" });
-	// 				break;
-	// 			case Roles.Manager:
-	// 				next({ name: "ManagerHome" });
-	// 				break;
-	// 			default:
-	// 				console.log("Такого типа пользователя нет");
-	// 		}
-	// }
+	// Иначе разрешить перенаправление
 	next();
 });
-
-// router.beforeEach((to, from, next) => {
-// 	const requiredRoles = to.meta.requiredRoles;
-// 	const requiresAuth = to.meta.requiresAuth;
-// 	const currentUser = store.state.user.data;
-
-// 	// Требуется ли аутентификация для посещения запрашиваемой страницы
-// 	if (requiresAuth) {
-// 		// Отсутствуют ли в вопросе специализированные роли пользователя
-// 		if (!requiredRoles.length) {
-// 			// Аутентифицирован ли уже пользователь
-// 			if (!store.state.user.isAuthenticated) {
-// 				// Перенаправление на страницу входа
-// 				next({
-// 					name: "Login",
-// 				});
-// 			} else {
-// 				// Если аутентифицирован, то позволить посетить запрашиваемую страницу
-// 				next();
-// 			}
-// 		} else {
-// 			// Если запрошены специализированные роли
-// 		}
-// 	} else {
-// 		// Если аутентификация не требуется, перенаправить на запрошенную страницу
-// 		next();
-// 	}
-// });
-
-// router.beforeEach((to, from, next) => {
-// 	// Проверяем, требуется ли аутентификация для данного маршрута
-// 	if (to.meta.requiresAuth) {
-// 		// Если пользователь не аутентифицирован, также перенаправляем на страницу входа
-// 		if (!store.state.user.isAuthenticated) {
-// 			next({
-// 				name: "Login",
-// 			});
-// 		} else {
-// 			// Если пользователь уже аутентифицирован, продолжаем навигацию
-// 			next();
-// 		}
-// 	} else {
-// 		// Если аутентификация не требуется, продолжаем навигацию
-// 		next();
-// 	}
-// });
-
-// router.beforeEach((to, from, next) => {
-// 	// Проверяем, требуется ли аутентификация для данного маршрута
-// 	if (to.matched.some((record) => record.meta.requiresAuth)) {
-// 		// Если токен пользователя отсутствует в локальном хранилище, перенаправляем на страницу входа
-// 		if (localStorage.getItem("userToken") === null) {
-// 			next({
-// 				name: "Login",
-// 				params: { nextUrl: to.fullPath },
-// 			});
-// 		} else {
-// 			// Если пользователь не аутентифицирован, также перенаправляем на страницу входа
-// 			if (!store.state.user.isAuthenticated) {
-// 				next({
-// 					path: "Login",
-// 					params: { nextUrl: to.fullPath },
-// 				});
-// 			} else {
-// 				// Если пользователь уже аутентифицирован, продолжаем навигацию
-// 				next();
-// 			}
-// 		}
-// 		// Если аутентификация не требуется, продолжаем навигацию
-// 	} else {
-// 		next();
-// 	}
-// });
 
 export default router;

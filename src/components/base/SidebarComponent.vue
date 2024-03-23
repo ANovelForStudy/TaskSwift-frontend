@@ -27,7 +27,7 @@
 			<v-divider></v-divider>
 
 			<v-list>
-				<v-list-item v-if="loading && !userData"
+				<v-list-item v-if="loading || !userData"
 					><v-progress-linear
 						color="accent"
 						class="rounded-xl"
@@ -76,7 +76,7 @@
 				</v-list-item>
 
 				<v-list-item
-					v-if="this.$store.state.user && this.$store.state.user?.data?.user_type === this.userRoles.Manager"
+					v-if="this.$store.state.auth.user && this.$store.getters['auth/getUserData']?.user_type === this.userRoles.Manager"
 					prepend-icon="person"
 					color="accent"
 					to="Employees"
@@ -86,7 +86,7 @@
 				</v-list-item>
 
 				<v-list-item
-					v-if="this.$store.state.user && this.$store.state?.user?.data?.user_type === this.userRoles.Manager"
+					v-if="this.$store.state.auth.user && this.$store.getters['auth/getUserData']?.user_type === this.userRoles.Manager"
 					prepend-icon="groups"
 					color="accent"
 					to="EmployeeGroups"
@@ -112,7 +112,7 @@
 
 				<v-list-item
 					prepend-icon="logout"
-					@click="this.$store.dispatch('logout', this.$router)"
+					@click="this.$store.dispatch('auth/logout', this.$router)"
 					color="accent"
 					nav
 				>
@@ -162,19 +162,10 @@ export default {
 	}),
 	computed: {
 		...mapState("sidebar", ["isRail"]),
-		...mapGetters({ loading: "userDataLoading", userData: "userData" }),
-	},
-	methods: {
-		logout() {
-			// Удаление токена из локального хранилища
-			localStorage.removeItem("userToken");
-
-			// Вызов мутации Vuex для очистки токена и статуса аутентификации
-			this.$store.commit("removeToken");
-
-			// Перенаправление на страницу входа
-			this.$router.push({ name: "Login" });
-		},
+		...mapGetters({
+			userData: "auth/getUserData",
+			loading: "auth/getUserDataIsLoading",
+		}),
 	},
 };
 </script>
