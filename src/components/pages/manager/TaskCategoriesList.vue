@@ -17,7 +17,10 @@
 				</v-col>
 			</v-row>
 			<v-row>
-				<v-col lg="4">
+				<v-col
+					sm="12"
+					md="6"
+				>
 					<v-select
 						v-model="selectedSortOption"
 						:items="sortOptions"
@@ -40,7 +43,10 @@
 						</template>
 					</v-btn>
 				</v-col>
-				<v-col lg="4">
+				<v-col
+					sm="12"
+					md="6"
+				>
 					<v-text-field
 						v-model="searchQuery"
 						label="Поиск"
@@ -48,6 +54,7 @@
 						prepend-inner-icon="search"
 						variant="outlined"
 						color="accent"
+						clearable
 					></v-text-field
 				></v-col>
 			</v-row>
@@ -78,7 +85,9 @@
 		<v-row>
 			<transition-group name="list">
 				<v-col
-					sm="4"
+					sm="6"
+					lg="4"
+					xxl="3"
 					v-for="category in sortedTaskCategories"
 					:key="category.id"
 				>

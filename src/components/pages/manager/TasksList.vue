@@ -34,7 +34,8 @@
 			</v-row>
 			<v-row>
 				<v-col
-					lg="2"
+					xl="2"
+					lg="12"
 					sm="12"
 				>
 					<v-select
@@ -49,7 +50,8 @@
 					></v-select>
 				</v-col>
 				<v-col
-					lg="2"
+					xl="2"
+					lg="3"
 					sm="6"
 					><v-select
 						v-model="selectedStatusFilterOption"
@@ -63,7 +65,8 @@
 					></v-select
 				></v-col>
 				<v-col
-					lg="2"
+					xl="2"
+					lg="3"
 					sm="6"
 					><v-select
 						v-model="selectedExecutorFilterOption"
@@ -77,7 +80,8 @@
 					></v-select
 				></v-col>
 				<v-col
-					lg="2"
+					xl="2"
+					lg="3"
 					sm="6"
 					><v-select
 						v-model="selectedDeadlineFilterOption"
@@ -91,7 +95,8 @@
 					></v-select
 				></v-col>
 				<v-col
-					lg="2"
+					xl="2"
+					lg="3"
 					sm="6"
 					><v-select
 						v-model="selectedCategoryFilterOption"
@@ -104,7 +109,8 @@
 						color="accent"
 					></v-select></v-col
 				><v-col
-					lg="2"
+					xl="2"
+					lg="12"
 					sm="12"
 				>
 					<v-text-field
@@ -114,6 +120,7 @@
 						prepend-inner-icon="search"
 						variant="outlined"
 						color="accent"
+						clearable
 					></v-text-field
 				></v-col>
 			</v-row>
