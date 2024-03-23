@@ -1,7 +1,19 @@
 <template>
 	<v-container>
 		<h1>Профиль пользователя</h1>
-		<v-row>
+
+		<div
+			v-if="isUserInfoLoading"
+			class="text-center my-auto"
+		>
+			<v-progress-linear
+				:size="64"
+				indeterminate
+				class="my-10"
+			></v-progress-linear>
+		</div>
+
+		<v-row v-if="!isUserInfoLoading">
 			<v-col
 				cols="12"
 				md="4"
@@ -10,7 +22,7 @@
 					<v-card-text>
 						<v-img
 							class="ma-2 bg-white rounded-xl mx-auto"
-							:src="user.profile_picture || 'https://robohash.org/{{ user.first_name }}-{{ user.last_name }}'"
+							:src="user.profile_picture || 'https://robohash.org/{{ user.first_name }}{{ user.last_name }}'"
 							alt="Аватар"
 							:width="400"
 						></v-img>
@@ -198,7 +210,7 @@ export default {
 			// Объект пользователя
 			user,
 
-			// Индикатор загрузки данных
+			// Индикатор загрузки данных (нужен для отображения индикатора загрузки данных)
 			isUserInfoLoading,
 		};
 	},
