@@ -20,7 +20,42 @@
 				</v-col>
 			</v-row>
 			<v-row>
-				<v-col lg="3">
+				<v-col sm="4"
+					><v-select
+						v-model="selectedStatusFilterOption"
+						:items="statusFilterOptions"
+						label="Фильтрация по статусу"
+						item-title="label"
+						item-value="value"
+						prepend-inner-icon="filter_alt"
+						variant="outlined"
+						color="accent"
+					></v-select
+				></v-col>
+				<v-col sm="4"
+					><v-select
+						v-model="selectedDeadlineFilterOption"
+						:items="deadlineFilterOptions"
+						label="Фильтрация по дедлайну"
+						item-title="label"
+						item-value="value"
+						prepend-inner-icon="local_fire_department"
+						variant="outlined"
+						color="accent"
+					></v-select
+				></v-col>
+				<v-col sm="4"
+					><v-select
+						v-model="selectedFilterCategory"
+						:items="[{ name: 'Все категории', id: 'all' }, { name: 'Без категории', id: null }, ...taskCategories]"
+						item-title="name"
+						item-value="id"
+						label="Фильтрация по категории"
+						prepend-inner-icon="bookmarks"
+						variant="outlined"
+						color="accent"
+					></v-select></v-col
+				><v-col sm="6">
 					<v-select
 						v-model="selectedSortOption"
 						:items="sortOptions"
@@ -43,42 +78,7 @@
 						</template>
 					</v-btn>
 				</v-col>
-				<v-col lg="2"
-					><v-select
-						v-model="selectedStatusFilterOption"
-						:items="statusFilterOptions"
-						label="Фильтрация по статусу"
-						item-title="label"
-						item-value="value"
-						prepend-inner-icon="filter_alt"
-						variant="outlined"
-						color="accent"
-					></v-select
-				></v-col>
-				<v-col lg="2"
-					><v-select
-						v-model="selectedDeadlineFilterOption"
-						:items="deadlineFilterOptions"
-						label="Фильтрация по дедлайну"
-						item-title="label"
-						item-value="value"
-						prepend-inner-icon="local_fire_department"
-						variant="outlined"
-						color="accent"
-					></v-select
-				></v-col>
-				<v-col lg="2"
-					><v-select
-						v-model="selectedFilterCategory"
-						:items="[{ name: 'Все категории', id: 'all' }, { name: 'Без категории', id: null }, ...taskCategories]"
-						item-title="name"
-						item-value="id"
-						label="Фильтрация по категории"
-						prepend-inner-icon="bookmarks"
-						variant="outlined"
-						color="accent"
-					></v-select></v-col
-				><v-col lg="3">
+				<v-col sm="6">
 					<v-text-field
 						v-model="searchQuery"
 						label="Поиск"
