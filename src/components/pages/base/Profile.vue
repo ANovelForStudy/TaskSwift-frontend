@@ -232,6 +232,10 @@ export default {
 				.catch((error) => {
 					// Отобразить ошибку, если она возникла при обновлении
 					console.error(error);
+
+					// Отобразить уведомление об ошибке
+					this.snackbar_text = "Что-то пошло не так! Данные профиля не были обновлены!";
+					this.snackbar = true;
 				})
 				.finally(() => {
 					this.loading = false;
