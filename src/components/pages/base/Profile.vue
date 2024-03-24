@@ -223,8 +223,8 @@ export default {
 				.put("/api/v1/auth/users/me/", this.user)
 				.then((response) => {
 					// Отобразить уведомление об успешном обновлении
-					snackbar_text: "Данные профиля успешно обновлены";
-					snackbar: true;
+					this.snackbar_text = "Данные профиля успешно обновлены";
+					this.snackbar = true;
 
 					// Перезаписать объект пользователя
 					this.user = response.data;
