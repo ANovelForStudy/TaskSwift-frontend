@@ -35,7 +35,6 @@
 				<div class="task-card__dates my-auto">
 					<v-card-subtitle>Дедлайн: {{ task.deadline ? formatDate(task.deadline) : "Не установлен" }}</v-card-subtitle>
 					<v-card-subtitle>Создана: {{ formatDate(task.created_at) }}</v-card-subtitle>
-					<v-card-subtitle>Изменена: {{ formatDate(task.updated_at) }}</v-card-subtitle>
 				</div>
 				<v-spacer></v-spacer>
 				<div class="px-3 ms-auto my-auto">
