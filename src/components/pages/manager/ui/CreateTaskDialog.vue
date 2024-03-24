@@ -75,42 +75,18 @@
 							<v-container class="pa-0">
 								<v-row>
 									<v-col>
-										<v-container>
-											<v-color-picker
-												class="mx-auto rounded-0"
-												v-model="task.color"
-												elevation="0"
-												label="Выбор цвета карточки"
-												mode="hex"
-												hide-inputs
-												show-swatches
-												:swatches="swatches"
-												:swatches-max-height="80"
-											></v-color-picker>
-										</v-container>
-
 										<v-text-field
 											v-model="task.color"
 											label="Цвет"
 											variant="outlined"
 											prepend-icon="palette"
-											readonly
 											color="accent"
 											hint="Только для чтения"
+											readonly
 										></v-text-field>
 									</v-col>
 									<v-col
-										><v-container>
-											<v-date-picker
-												v-model="task.deadline"
-												label="Дедлайн"
-												color="accent"
-												class="mb-2"
-												dense
-											></v-date-picker>
-										</v-container>
-
-										<v-text-field
+										><v-text-field
 											v-model="formattedDeadline"
 											label="Дедлайн"
 											variant="outlined"
@@ -119,8 +95,33 @@
 											class="mb-2"
 											hint="В формате ГГГГ-ММ-ДД"
 											readonly
-										></v-text-field
+										></v-text-field>
+									</v-col>
+								</v-row>
+								<v-row class="border rounded-lg align-center">
+									<v-col
+										><v-color-picker
+											class="mx-auto rounded-0"
+											v-model="task.color"
+											elevation="0"
+											label="Выбор цвета карточки"
+											mode="hex"
+											hide-inputs
+											show-swatches
+											:swatches="swatches"
+											:swatches-max-height="80"
+										></v-color-picker
 									></v-col>
+									<v-col>
+										<v-date-picker
+											v-model="task.deadline"
+											label="Дедлайн"
+											color="accent"
+											class="mb-2"
+											hide-header
+											dense
+										></v-date-picker>
+									</v-col>
 								</v-row>
 							</v-container>
 						</v-container>
@@ -210,7 +211,7 @@ export default {
 		},
 		formattedDeadline() {
 			if (this.task.deadline) {
-				return moment(this.task.deadline).format("YYYY-MM-DD");
+				return moment(this.task.deadline).format("dd, D MMMM YYYY года");
 			}
 			return "";
 		},
