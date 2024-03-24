@@ -8,6 +8,7 @@
 			<v-list-item
 				><CreateTaskDialog
 					:categories="taskCategories"
+					:employees="employees"
 					@createTask="createTask"
 				></CreateTaskDialog
 			></v-list-item>

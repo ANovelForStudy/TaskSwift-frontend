@@ -4,8 +4,13 @@ import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import colors from "vuetify/util/colors";
 import { aliases, md } from "vuetify/iconsets/md";
+import { ru } from "vuetify/locale";
 
 const vuetify = createVuetify({
+	locale: {
+		locale: "ru",
+		messages: { ru },
+	},
 	components,
 	directives,
 	icons: {

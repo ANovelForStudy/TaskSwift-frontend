@@ -62,7 +62,7 @@
 								<v-col>
 									<v-select
 										v-model="task.assigned_to"
-										:items="employeeItems"
+										:items="formattedEmployees"
 										label="Исполнитель"
 										prepend-icon="person"
 										variant="outlined"
@@ -71,17 +71,6 @@
 									></v-select>
 								</v-col>
 							</v-row>
-
-							<v-text-field
-								v-model="task.deadline"
-								label="Дедлайн"
-								:rules="[taskDeadlineFormatValidation]"
-								variant="outlined"
-								prepend-icon="local_fire_department"
-								color="accent"
-								class="mb-2"
-								hint="В формате ГГГГ-ММ-ДД"
-							></v-text-field>
 
 							<v-container class="pa-0">
 								<v-row>
@@ -110,7 +99,28 @@
 											hint="Только для чтения"
 										></v-text-field>
 									</v-col>
-									<v-col> </v-col>
+									<v-col
+										><v-container>
+											<v-date-picker
+												v-model="task.deadline"
+												label="Дедлайн"
+												color="accent"
+												class="mb-2"
+												dense
+											></v-date-picker>
+										</v-container>
+
+										<v-text-field
+											v-model="formattedDeadline"
+											label="Дедлайн"
+											variant="outlined"
+											prepend-icon="local_fire_department"
+											color="accent"
+											class="mb-2"
+											hint="В формате ГГГГ-ММ-ДД"
+											readonly
+										></v-text-field
+									></v-col>
 								</v-row>
 							</v-container>
 						</v-container>
@@ -146,8 +156,7 @@
 </template>
 
 <script>
-// Сторонние библиотеки
-
+import moment from "moment";
 // Получение данных
 import getManagerEmployees from "@/hooks/manager/getManagerEmployees";
 
@@ -160,12 +169,12 @@ import ActionButton from "@/components/ui/ActionButton";
 export default {
 	data: () => ({
 		swatches: [
-			["#F44336", "#E91E63", "#9C27B0"],
-			["#673AB7", "#3F51B5", "#2196F3"],
-			["#03A9F4", "#00BCD4", "#009688"],
-			["#4CAF50", "#8BC34A", "#CDDC39"],
-			["#FFEB3B", "#FFC107", "#FF9800"],
-			["#FF5722", "#795548", "#607D8B"],
+			["#F44336", "#673AB7", "#9C27B0"],
+			["#E91E63", "#3F51B5", "#2196F3"],
+			["#FF5722", "#00BCD4", "#009688"],
+			["#FF9800", "#8BC34A", "#CDDC39"],
+			["#FFEB3B", "#FFC107", "#03A9F4"],
+			["#4CAF50", "#795548", "#607D8B"],
 			["#9E9E9E", "#FFFFFF", "#C6FF00"],
 		],
 	}),
@@ -174,13 +183,15 @@ export default {
 			type: Array,
 			required: true,
 		},
+		employees: {
+			type: Array,
+			required: true,
+		},
 	},
 	setup(props, context) {
-		const { employees } = getManagerEmployees();
 		const { task, createTask, isRequestProcessing, isDialogOpen } = useCreateTask(context.emit);
 
 		return {
-			employees,
 			task,
 			createTask,
 			isRequestProcessing,
@@ -191,23 +202,20 @@ export default {
 		ActionButton,
 	},
 	computed: {
-		employeeItems() {
+		formattedEmployees() {
 			return this.employees.map((employee) => ({
 				title: `${employee.last_name || ""} ${employee.first_name || ""} ${employee.middle_name || ""} - ${employee.email}`,
 				value: employee.id,
 			}));
 		},
+		formattedDeadline() {
+			if (this.task.deadline) {
+				return moment(this.task.deadline).format("YYYY-MM-DD");
+			}
+			return "";
+		},
 	},
 	methods: {
-		taskDeadlineFormatValidation(value) {
-			const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-
-			if (value === "" || value === null || dateRegex.test(value)) {
-				return true; // значение пустое или в правильном формате
-			} else {
-				return "Неправильный формат даты (ГГГГ-ММ-ДД)";
-			}
-		},
 		taskTitleLengthValidation(value) {
 			return this.task.title !== "" || "Название обязательно";
 		},
